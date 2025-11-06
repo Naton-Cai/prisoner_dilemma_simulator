@@ -494,16 +494,119 @@
     scene_settings: {
         "data/scene.rgs": (
             camera_settings: (
-                position: (0.0, 1.0, 0.0),
+                position: (-0.5079365, -1.3348553, -3.0),
                 yaw: 0.0,
                 pitch: 0.0,
-                projection: Perspective((
-                    fov: 1.3089969,
+                projection: Orthographic((
                     z_near: 0.025,
                     z_far: 128.0,
+                    vertical_size: 8.5,
                 )),
             ),
-            node_infos: {},
+            node_infos: {
+                (
+                    index: 54,
+                    generation: 32,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 3,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 4,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 53,
+                    generation: 38,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 55,
+                    generation: 32,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 68,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 56,
+                    generation: 32,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 6,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 10,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 5,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 7,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 11,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 2,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 399,
+                    generation: 7,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 8,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 9,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+            },
         ),
     },
     recent: (

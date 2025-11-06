@@ -9,6 +9,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 PrisonerDilemmaSimulator = { path = "../game", default-features = false }
+fyrox.workspace = true
 
 [features]
 default = ["PrisonerDilemmaSimulator/default"]
