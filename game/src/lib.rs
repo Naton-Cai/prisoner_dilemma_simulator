@@ -10,7 +10,7 @@ use fyrox::{
     plugin::{Plugin, PluginContext, PluginRegistrationContext},
     scene::Scene,
 };
-use rand::prelude::*;
+
 use std::path::Path;
 
 // Re-export the engine.

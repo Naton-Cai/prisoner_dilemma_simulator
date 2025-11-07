@@ -6,6 +6,7 @@ edition = "2021"
 
 [dependencies]
 fyrox = {workspace = true}
+fyrox-graph = "0.36.2"
 rand = "0.9.2"
 
 [features]

@@ -1,12 +1,33 @@
 use fyrox::{
+    asset::{manager::ResourceManager, untyped::ResourceKind},
     core::{
-        algebra::Vector2, log::Log, reflect::prelude::*, type_traits::prelude::*,
+        algebra::{Vector2, Vector3},
+        log::Log,
+        pool::Handle,
+        reflect::prelude::*,
+        type_traits::prelude::*,
+        uuid,
         visitor::prelude::*,
     },
-    event::Event,
-    scene::dim2::rigidbody::RigidBody,
-    script::{ScriptContext, ScriptDeinitContext, ScriptTrait},
+    gui::texture::Texture,
+    material::{Material, MaterialResource},
+    scene::{
+        base::BaseBuilder,
+        dim2::{
+            rectangle::{Rectangle, RectangleBuilder},
+            rigidbody::RigidBody,
+        },
+        graph::{self, Graph},
+        node::Node,
+        transform::TransformBuilder,
+    },
+    script::{ScriptContext, ScriptTrait},
 };
+const COOPERATIVE_SPRITE_PATH: &str = "data/sprites/bugster_cooperative.png";
+const GREEDY_SPRITE_PATH: &str = "data/sprites/bugster_greedy.png";
+const MAX_SPEED: f32 = 3.0;
+const MAX_WAIT_TIME: f32 = 5.0;
+const MIN_WAIT_TIME: f32 = 3.0;
 
 //our enum that determines the personality type of our bugster
 #[derive(Visit, Reflect, Debug, Clone)]
@@ -36,26 +57,36 @@ pub struct Bugsters {
 }
 
 impl ScriptTrait for Bugsters {
-    fn on_init(&mut self, context: &mut ScriptContext) {
+    fn on_init(&mut self, _context: &mut ScriptContext) {
         self.healthpoints = 10;
-        self.speed = 2.0;
+        self.speed = MAX_SPEED;
         self.x_speed = 0.0;
         self.y_speed = 0.0;
+        self.personality = PersonalityType::Greedy;
         self.time_since_last_change = 2.0;
         self.change_interval = 1.0;
     }
 
     fn on_start(&mut self, context: &mut ScriptContext) {
-        // There should be a logic that depends on other scripts in scene.
-        // It is called right after **all** scripts were initialized.
-    }
+        let parent_handle = context.handle;
+        let child_handle = set_texture(
+            self.personality.clone(),
+            &mut context.scene.graph,
+            context.resource_manager.clone(),
+        );
+        //link the sprite as a child of the bugster node
+        //for some reason link_nodes is not accessible here, so using link_nodes_keep_global_transform instead
+        context
+            .scene
+            .graph
+            .link_nodes_keep_global_transform(child_handle, parent_handle);
 
-    fn on_deinit(&mut self, context: &mut ScriptDeinitContext) {
-        // Put de-initialization logic here.
-    }
-
-    fn on_os_event(&mut self, event: &Event<()>, context: &mut ScriptContext) {
-        // Respond to OS events here.
+        //set the sprite position to (0,0,0) relative to the bugster node
+        if let Some(rectangle) = context.scene.graph[child_handle].cast_mut::<Rectangle>() {
+            rectangle
+                .local_transform_mut()
+                .set_position(Vector3::new(0.0, 0.0, 0.0));
+        }
     }
 
     fn on_update(&mut self, context: &mut ScriptContext) {
@@ -67,12 +98,59 @@ impl ScriptTrait for Bugsters {
                 //randomly generate new x and y speeds within the speed limit
                 self.x_speed = rand::random_range(-self.speed..=self.speed);
                 self.y_speed = rand::random_range(-1.0..=1.0) * (self.speed - self.x_speed.abs());
+                //reset the timer
                 self.time_since_last_change = 0.0;
+                //set a new random change interval
+                self.change_interval = rand::random_range(MIN_WAIT_TIME..=MAX_WAIT_TIME);
+                //log the new speeds
                 Log::info(format!("Bugster X_speed: {}", self.x_speed).as_str());
                 Log::info(format!("Bugster Y_speed: {}", self.y_speed).as_str());
+
+                //apply the new speeds as an impulse to the rigid body
+                rigid_body.apply_impulse(Vector2::new(self.x_speed, self.y_speed));
             }
-            //keep the bugster moving
-            rigid_body.set_lin_vel(Vector2::new(self.x_speed, self.y_speed));
         }
     }
+}
+
+fn set_texture(
+    personality: PersonalityType,
+    graph: &mut Graph,
+    resource_manager: ResourceManager,
+) -> Handle<Node> {
+    let mut material = Material::standard_2d();
+    match personality {
+        PersonalityType::Cooperative => {
+            material.bind(
+                "diffuseTexture",
+                Some(resource_manager.request::<Texture>(COOPERATIVE_SPRITE_PATH)),
+            );
+            Log::info("Set sprite to cooperative texture");
+        }
+        PersonalityType::Greedy => {
+            material.bind(
+                "diffuseTexture",
+                Some(resource_manager.request::<Texture>(GREEDY_SPRITE_PATH)),
+            );
+            Log::info("Set sprite to greedy texture");
+        }
+    }
+
+    let material_resource = MaterialResource::new_ok(
+        uuid::Uuid::new_v4(), // Generate a random UUID for the resource
+        ResourceKind::Embedded,
+        material,
+    );
+
+    RectangleBuilder::new(
+        BaseBuilder::new().with_local_transform(
+            TransformBuilder::new()
+                // Size of the rectangle is defined only by scale.
+                .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
+                .with_local_position(Vector3::new(0.0, 0.0, 0.0))
+                .build(),
+        ),
+    )
+    .with_material(material_resource)
+    .build(graph)
 }
