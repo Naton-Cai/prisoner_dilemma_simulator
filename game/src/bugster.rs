@@ -9,7 +9,7 @@ use fyrox::{
         uuid,
         visitor::prelude::*,
     },
-    gui::texture::Texture,
+    gui::{texture::Texture, UiNode},
     material::{Material, MaterialResource},
     scene::{
         base::BaseBuilder,
@@ -17,7 +17,7 @@ use fyrox::{
             rectangle::{Rectangle, RectangleBuilder},
             rigidbody::RigidBody,
         },
-        graph::{self, Graph},
+        graph::Graph,
         node::Node,
         transform::TransformBuilder,
     },
@@ -49,6 +49,7 @@ impl Default for PersonalityType {
 pub struct Bugsters {
     pub healthpoints: i64,
     pub personality: PersonalityType,
+    pub ui_handle: Handle<UiNode>, //keeps track of the UI health element
     speed: f32,
     x_speed: f32,
     y_speed: f32,
@@ -65,9 +66,11 @@ impl ScriptTrait for Bugsters {
         self.personality = PersonalityType::Greedy;
         self.time_since_last_change = 2.0;
         self.change_interval = 1.0;
+        self.ui_handle = Handle::NONE;
     }
 
     fn on_start(&mut self, context: &mut ScriptContext) {
+        //set the texture on start
         let parent_handle = context.handle;
         let child_handle = set_texture(
             self.personality.clone(),
@@ -93,7 +96,7 @@ impl ScriptTrait for Bugsters {
         self.time_since_last_change += context.dt;
 
         if let Some(rigid_body) = context.scene.graph[context.handle].cast_mut::<RigidBody>() {
-            //when the time since last change exceeds the change interval, change direction
+            //when the time since last change exceeds the change interval, change direction and apply impulse
             if self.time_since_last_change >= self.change_interval {
                 //randomly generate new x and y speeds within the speed limit
                 self.x_speed = rand::random_range(-self.speed..=self.speed);
@@ -103,8 +106,8 @@ impl ScriptTrait for Bugsters {
                 //set a new random change interval
                 self.change_interval = rand::random_range(MIN_WAIT_TIME..=MAX_WAIT_TIME);
                 //log the new speeds
-                Log::info(format!("Bugster X_speed: {}", self.x_speed).as_str());
-                Log::info(format!("Bugster Y_speed: {}", self.y_speed).as_str());
+                //Log::info(format!("Bugster X_speed: {}", self.x_speed).as_str());
+                //Log::info(format!("Bugster Y_speed: {}", self.y_speed).as_str());
 
                 //apply the new speeds as an impulse to the rigid body
                 rigid_body.apply_impulse(Vector2::new(self.x_speed, self.y_speed));
@@ -113,6 +116,7 @@ impl ScriptTrait for Bugsters {
     }
 }
 
+//sets the texture of the bugster based on its personality type
 fn set_texture(
     personality: PersonalityType,
     graph: &mut Graph,

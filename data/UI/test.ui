@@ -1,11 +1,11 @@
 FTAX:2;
 __ROOT__[]
 {
-	Ui[ScreenSize<vec2f32:945; 657>VisualDebug<bool:false>CursorPosition<vec2f32:0; 0>DoubleClickTimeSlice<f32:0.5>TooltipAppearDelay<f32:0.55>]
+	Ui[ScreenSize<vec2f32:945; 179>VisualDebug<bool:false>CursorPosition<vec2f32:0; 0>DoubleClickTimeSlice<f32:0.5>TooltipAppearDelay<f32:0.55>]
 	{
 		Nodes[]
 		{
-			Records[Length<u32:10>]
+			Records[Length<u32:5>]
 			{
 				Item0[Generation<u32:1>]
 				{
@@ -15,7 +15,7 @@ __ROOT__[]
 						{
 							WidgetData[]
 							{
-								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:415ab196-a2f4-4916-8659-e9c0c6801c7a>IsResourceInstanceRoot<bool:false>]
+								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:d7425a95-ceb1-483b-bf15-775bdade2762>IsResourceInstanceRoot<bool:false>]
 								{
 									Handle[Index<u32:0>Generation<u32:1>]{}
 									DesiredLocalPosition[Value<vec2f32:0; 0>Flags<u8:1>]{}
@@ -52,11 +52,10 @@ __ROOT__[]
 										Value[Left<f32:0>Top<f32:0>Right<f32:0>Bottom<f32:0>]{}
 									}
 									Visibility[Value<bool:true>Flags<u8:1>]{}
-									Children[Length<u32:3>]
+									Children[Length<u32:2>]
 									{
 										Item0[Index<u32:3>Generation<u32:1>]{}
 										Item1[Index<u32:4>Generation<u32:1>]{}
-										Item2[Index<u32:5>Generation<u32:1>]{}
 									}
 									Parent[Index<u32:0>Generation<u32:0>]{}
 									HitTestVisibility[Value<bool:true>Flags<u8:1>]{}
@@ -65,7 +64,7 @@ __ROOT__[]
 									AllowDrop[Value<bool:false>Flags<u8:1>]{}
 									Style[IsSome<u8:1>]
 									{
-										Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
+										Data[Uuid<uuid:e3763518-f186-44bf-aa34-a4ee00f2f894>]
 										{
 											Embedded[Id<u64:1>]
 											{
@@ -338,7 +337,7 @@ __ROOT__[]
 									Resource[IsSome<u8:0>]{}
 									Material[Flags<u8:1>]
 									{
-										Value[Uuid<uuid:db120923-37da-49ab-aef1-9a4b8665fb73>]
+										Value[Uuid<uuid:398303a0-ef91-43f2-ab9c-ef6ef4c3206a>]
 										{
 											Embedded[Id<u64:2>]
 											{
@@ -367,7 +366,7 @@ __ROOT__[]
 						{
 							WidgetData[]
 							{
-								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 21; 21; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:c5b9fab9-01e8-4ad0-84ca-d37c2b7361b6>IsResourceInstanceRoot<bool:false>]
+								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 21; 21; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:c894eb15-61af-4c1d-9462-1a595328e2de>IsResourceInstanceRoot<bool:false>]
 								{
 									Handle[Index<u32:1>Generation<u32:1>]{}
 									DesiredLocalPosition[Value<vec2f32:0; 0>Flags<u8:1>]{}
@@ -412,7 +411,7 @@ __ROOT__[]
 									AllowDrop[Value<bool:false>Flags<u8:1>]{}
 									Style[IsSome<u8:1>]
 									{
-										Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
+										Data[Uuid<uuid:e3763518-f186-44bf-aa34-a4ee00f2f894>]
 										{
 											Embedded[Id<u64:1>]{}
 										}
@@ -438,7 +437,7 @@ __ROOT__[]
 									Resource[IsSome<u8:0>]{}
 									Material[Flags<u8:1>]
 									{
-										Value[Uuid<uuid:c632096a-cd76-4040-9c3e-03eb7416b283>]
+										Value[Uuid<uuid:c755131f-361e-4ed9-a6be-ffa86fd2ed88>]
 										{
 											Embedded[Id<u64:3>]
 											{
@@ -517,7 +516,7 @@ __ROOT__[]
 							{
 								Border[]
 								{
-									Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 20; 20; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:3e193575-d006-489a-b496-4efa28ec200b>IsResourceInstanceRoot<bool:false>]
+									Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 20; 20; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:e3e7626a-1d24-4892-9ec3-7ea74b0df952>IsResourceInstanceRoot<bool:false>]
 									{
 										Handle[Index<u32:2>Generation<u32:1>]{}
 										DesiredLocalPosition[Value<vec2f32:0; 0>Flags<u8:1>]{}
@@ -565,7 +564,7 @@ __ROOT__[]
 										AllowDrop[Value<bool:false>Flags<u8:1>]{}
 										Style[IsSome<u8:1>]
 										{
-											Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
+											Data[Uuid<uuid:e3763518-f186-44bf-aa34-a4ee00f2f894>]
 											{
 												Embedded[Id<u64:1>]{}
 											}
@@ -591,7 +590,7 @@ __ROOT__[]
 										Resource[IsSome<u8:0>]{}
 										Material[Flags<u8:1>]
 										{
-											Value[Uuid<uuid:cea566c9-3695-4838-a896-5a37bb74efef>]
+											Value[Uuid<uuid:7be56cf8-15af-4230-83bc-200fd824bc6b>]
 											{
 												Embedded[Id<u64:4>]
 												{
@@ -657,7 +656,7 @@ __ROOT__[]
 						{
 							WidgetData[]
 							{
-								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 20; 20; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:true>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:true>Id<uuid:3963709f-5a08-498f-89f9-376f0d9d5d62>IsResourceInstanceRoot<bool:false>]
+								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 20; 20; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:true>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:true>Id<uuid:c749a77f-1ab2-4253-a4ff-399c02500cea>IsResourceInstanceRoot<bool:false>]
 								{
 									Handle[Index<u32:3>Generation<u32:1>]{}
 									DesiredLocalPosition[Value<vec2f32:20; 20>Flags<u8:1>]{}
@@ -705,7 +704,7 @@ __ROOT__[]
 									AllowDrop[Value<bool:false>Flags<u8:1>]{}
 									Style[IsSome<u8:1>]
 									{
-										Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
+										Data[Uuid<uuid:e3763518-f186-44bf-aa34-a4ee00f2f894>]
 										{
 											Embedded[Id<u64:1>]{}
 										}
@@ -731,7 +730,7 @@ __ROOT__[]
 									Resource[IsSome<u8:0>]{}
 									Material[Flags<u8:1>]
 									{
-										Value[Uuid<uuid:a4ed5ebd-e368-41c9-9608-16fc8fd05f62>]
+										Value[Uuid<uuid:86f76d04-2fc0-476a-b217-a02c2abaa65d>]
 										{
 											Embedded[Id<u64:5>]
 											{
@@ -771,7 +770,7 @@ __ROOT__[]
 						{
 							WidgetData[]
 							{
-								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 300; 300; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:a80a3296-1583-4ecd-a1b4-14056e2d329d>IsResourceInstanceRoot<bool:false>]
+								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 300; 300; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:374cfbac-63cf-46fb-a443-fd18165e61ff>IsResourceInstanceRoot<bool:false>]
 								{
 									Handle[Index<u32:4>Generation<u32:1>]{}
 									DesiredLocalPosition[Value<vec2f32:300; 300>Flags<u8:1>]{}
@@ -816,7 +815,7 @@ __ROOT__[]
 									AllowDrop[Value<bool:false>Flags<u8:1>]{}
 									Style[IsSome<u8:1>]
 									{
-										Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
+										Data[Uuid<uuid:e3763518-f186-44bf-aa34-a4ee00f2f894>]
 										{
 											Embedded[Id<u64:1>]{}
 										}
@@ -842,7 +841,7 @@ __ROOT__[]
 									Resource[IsSome<u8:0>]{}
 									Material[Flags<u8:1>]
 									{
-										Value[Uuid<uuid:2ba6dedf-86e4-4381-a9d1-de54b1bf2939>]
+										Value[Uuid<uuid:45c5cce6-cf8a-4e18-b534-e60699ffabfe>]
 										{
 											Embedded[Id<u64:6>]
 											{
@@ -911,451 +910,6 @@ __ROOT__[]
 						}
 					}
 				}
-				Item5[Generation<u32:1>]
-				{
-					Payload[IsSome<u8:1>]
-					{
-						Data[TypeUuid<uuid:6b843a36-53da-467b-b85e-2380fe891ca1>]
-						{
-							WidgetData[]
-							{
-								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 278; 285; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:7b57536e-65b9-4d54-be9b-50640213b28e>IsResourceInstanceRoot<bool:true>]
-								{
-									Handle[Index<u32:5>Generation<u32:1>]{}
-									DesiredLocalPosition[Value<vec2f32:278; 285>Flags<u8:1>]{}
-									Children[Length<u32:2>]
-									{
-										Item0[Index<u32:6>Generation<u32:1>]{}
-										Item1[Index<u32:9>Generation<u32:1>]{}
-									}
-									Parent[Index<u32:0>Generation<u32:1>]{}
-									AllowDrag[Value<bool:false>Flags<u8:1>]{}
-									Style[IsSome<u8:1>]
-									{
-										Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
-										{
-											Embedded[Id<u64:7>]
-											{
-												ArcData[TypeUuid<uuid:38a63b49-d765-4c01-8fb5-202cc43d607e>]
-												{
-													Data[]
-													{
-														Parent[IsSome<u8:0>]{}
-														Variables[Count<u32:28>]
-														{
-															Item0[Key<str:"CheckBox.CornerRadius">]
-															{
-																Value[Id<u32:0>0<f32:4>]{}
-															}
-															Item1[Key<str:"Global.Brush.Lightest">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:100>G<u8:100>B<u8:100>A<u8:255>]{}
-																	}
-																}
-															}
-															Item2[Key<str:"Global.Font.Size">]
-															{
-																Value[Id<u32:0>0<f32:14>]{}
-															}
-															Item3[Key<str:"Global.Brush.Text">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:190>G<u8:190>B<u8:190>A<u8:255>]{}
-																	}
-																}
-															}
-															Item4[Key<str:"Global.Brush.Information">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:250>G<u8:235>B<u8:215>A<u8:255>]{}
-																	}
-																}
-															}
-															Item5[Key<str:"Global.Brush.Primary">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:50>G<u8:50>B<u8:50>A<u8:255>]{}
-																	}
-																}
-															}
-															Item6[Key<str:"Global.Brush.Highlight">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:80>G<u8:118>B<u8:178>A<u8:255>]{}
-																	}
-																}
-															}
-															Item7[Key<str:"Global.Brush.Light">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:70>G<u8:70>B<u8:70>A<u8:255>]{}
-																	}
-																}
-															}
-															Item8[Key<str:"Global.Brush.Error">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:255>G<u8:0>B<u8:0>A<u8:255>]{}
-																	}
-																}
-															}
-															Item9[Key<str:"CheckBox.CheckMarkSize">]
-															{
-																Value[Id<u32:0>0<f32:7>]{}
-															}
-															Item10[Key<str:"Global.Brush.Darker">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:30>G<u8:30>B<u8:30>A<u8:255>]{}
-																	}
-																}
-															}
-															Item11[Key<str:"Global.Brush.Darkest">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:20>G<u8:20>B<u8:20>A<u8:255>]{}
-																	}
-																}
-															}
-															Item12[Key<str:"DropdownList.CornerRadius">]
-															{
-																Value[Id<u32:0>0<f32:4>]{}
-															}
-															Item13[Key<str:"ToggleButton.CornerRadius">]
-															{
-																Value[Id<u32:0>0<f32:4>]{}
-															}
-															Item14[Key<str:"Button.CornerRadius">]
-															{
-																Value[Id<u32:0>0<f32:4>]{}
-															}
-															Item15[Key<str:"Global.Brush.LighterPrimary">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:60>G<u8:60>B<u8:60>A<u8:255>]{}
-																	}
-																}
-															}
-															Item16[Key<str:"Global.Brush.Bright">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:130>G<u8:130>B<u8:130>A<u8:255>]{}
-																	}
-																}
-															}
-															Item17[Key<str:"Button.BorderThickness">]
-															{
-																Value[Id<u32:1>]
-																{
-																	0[Left<f32:1>Top<f32:1>Right<f32:1>Bottom<f32:1>]{}
-																}
-															}
-															Item18[Key<str:"CheckBox.BorderThickness">]
-															{
-																Value[Id<u32:1>]
-																{
-																	0[Left<f32:1>Top<f32:1>Right<f32:1>Bottom<f32:1>]{}
-																}
-															}
-															Item19[Key<str:"ToggleButton.BorderThickness">]
-															{
-																Value[Id<u32:1>]
-																{
-																	0[Left<f32:1>Top<f32:1>Right<f32:1>Bottom<f32:1>]{}
-																}
-															}
-															Item20[Key<str:"Global.Brush.Brightest">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:160>G<u8:160>B<u8:160>A<u8:255>]{}
-																	}
-																}
-															}
-															Item21[Key<str:"Global.Brush.DimBlue">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:66>G<u8:99>B<u8:149>A<u8:255>]{}
-																	}
-																}
-															}
-															Item22[Key<str:"Global.Brush.Foreground">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:255>G<u8:255>B<u8:255>A<u8:255>]{}
-																	}
-																}
-															}
-															Item23[Key<str:"Global.Brush.Warning">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:255>G<u8:215>B<u8:0>A<u8:255>]{}
-																	}
-																}
-															}
-															Item24[Key<str:"Global.Brush.Ok">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:0>G<u8:255>B<u8:0>A<u8:255>]{}
-																	}
-																}
-															}
-															Item25[Key<str:"Global.Brush.Lighter">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:85>G<u8:85>B<u8:85>A<u8:255>]{}
-																	}
-																}
-															}
-															Item26[Key<str:"Global.Brush.Dark">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:40>G<u8:40>B<u8:40>A<u8:255>]{}
-																	}
-																}
-															}
-															Item27[Key<str:"Global.Brush.BrightBlue">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:80>G<u8:118>B<u8:178>A<u8:255>]{}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-									Tooltip[IsSome<u8:0>]{}
-									ContextMenu[IsSome<u8:0>]{}
-									Resource[IsSome<u8:1>]
-									{
-										Data[Uuid<uuid:d09b7bc5-17e0-4143-b092-77b3386e5dbc>]{}
-									}
-									OriginalHandleInResource[Index<u32:0>Generation<u32:1>]{}
-								}
-							}
-						}
-					}
-				}
-				Item6[Generation<u32:1>]
-				{
-					Payload[IsSome<u8:1>]
-					{
-						Data[TypeUuid<uuid:2abcf12b-2f19-46da-b900-ae8890f7c9c6>]
-						{
-							WidgetData[]
-							{
-								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 298; 305; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:true>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:true>Id<uuid:2a0c8abb-f240-441c-ab43-1ed812ee297f>IsResourceInstanceRoot<bool:false>]
-								{
-									Handle[Index<u32:6>Generation<u32:1>]{}
-									Children[Length<u32:1>]
-									{
-										Item0[Index<u32:7>Generation<u32:1>]{}
-									}
-									Parent[Index<u32:5>Generation<u32:1>]{}
-									Style[IsSome<u8:1>]
-									{
-										Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
-										{
-											Embedded[Id<u64:7>]{}
-										}
-									}
-									Tooltip[IsSome<u8:0>]{}
-									ContextMenu[IsSome<u8:0>]{}
-									Resource[IsSome<u8:1>]
-									{
-										Data[Uuid<uuid:d09b7bc5-17e0-4143-b092-77b3386e5dbc>]{}
-									}
-									OriginalHandleInResource[Index<u32:3>Generation<u32:1>]{}
-								}
-								RepeatTimer[IsSome<u8:0>]{}
-							}
-						}
-					}
-				}
-				Item7[Generation<u32:1>]
-				{
-					Payload[IsSome<u8:1>]
-					{
-						Data[TypeUuid<uuid:bb4b60aa-c657-4ed6-8db6-d7f374397c73>]
-						{
-							WidgetData[]
-							{
-								Border[]
-								{
-									Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 298; 305; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:d5be86e2-3b4a-45c6-b528-e0974f24117c>IsResourceInstanceRoot<bool:false>]
-									{
-										Handle[Index<u32:7>Generation<u32:1>]{}
-										Children[Length<u32:1>]
-										{
-											Item0[Index<u32:8>Generation<u32:1>]{}
-										}
-										Parent[Index<u32:6>Generation<u32:1>]{}
-										Style[IsSome<u8:1>]
-										{
-											Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
-											{
-												Embedded[Id<u64:7>]{}
-											}
-										}
-										Tooltip[IsSome<u8:0>]{}
-										ContextMenu[IsSome<u8:0>]{}
-										Resource[IsSome<u8:1>]
-										{
-											Data[Uuid<uuid:d09b7bc5-17e0-4143-b092-77b3386e5dbc>]{}
-										}
-										OriginalHandleInResource[Index<u32:2>Generation<u32:1>]{}
-									}
-								}
-							}
-						}
-					}
-				}
-				Item8[Generation<u32:1>]
-				{
-					Payload[IsSome<u8:1>]
-					{
-						Data[TypeUuid<uuid:22f7f502-7622-4ecb-8c5f-ba436e7ee823>]
-						{
-							WidgetData[]
-							{
-								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 299; 306; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:bccf4a25-cb57-48b3-afe6-81f0cc3121b0>IsResourceInstanceRoot<bool:false>]
-								{
-									Handle[Index<u32:8>Generation<u32:1>]{}
-									Children[Length<u32:0>]{}
-									Parent[Index<u32:7>Generation<u32:1>]{}
-									Style[IsSome<u8:1>]
-									{
-										Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
-										{
-											Embedded[Id<u64:7>]{}
-										}
-									}
-									Tooltip[IsSome<u8:0>]{}
-									ContextMenu[IsSome<u8:0>]{}
-									Resource[IsSome<u8:1>]
-									{
-										Data[Uuid<uuid:d09b7bc5-17e0-4143-b092-77b3386e5dbc>]{}
-									}
-									OriginalHandleInResource[Index<u32:1>Generation<u32:1>]{}
-								}
-								FormattedText[]
-								{
-									Brush[Flags<u8:1>]
-									{
-										Value[Id<u32:0>]
-										{
-											0[R<u8:190>G<u8:190>B<u8:190>A<u8:255>]{}
-										}
-									}
-									Runs[Length<u32:0>]{}
-								}
-							}
-						}
-					}
-				}
-				Item9[Generation<u32:1>]
-				{
-					Payload[IsSome<u8:1>]
-					{
-						Data[TypeUuid<uuid:22f7f502-7622-4ecb-8c5f-ba436e7ee823>]
-						{
-							WidgetData[]
-							{
-								Widget[Name<str:"">GlobalVisibility<bool:true>IsMouseDirectlyOver<bool:false>TooltipTime<f32:0.1>LayoutTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>RenderTransform<mat3:1; 0; 0; 0; 1; 0; 0; 0; 1>VisualTransform<mat3:1; 0; 0; 0; 1; 0; 578; 585; 1>PreviewMessages<bool:false>HandleOsEvents<bool:false>NeedUpdate<bool:false>IgnoreLayoutRounding<bool:false>AcceptsInput<bool:false>Id<uuid:0ed39c9f-089a-455a-9656-d3b681bd2177>IsResourceInstanceRoot<bool:false>]
-								{
-									Handle[Index<u32:9>Generation<u32:1>]{}
-									Children[Length<u32:0>]{}
-									Parent[Index<u32:5>Generation<u32:1>]{}
-									Style[IsSome<u8:1>]
-									{
-										Data[Uuid<uuid:4259912f-764f-4bf4-a668-4a866892c1e1>]
-										{
-											Embedded[Id<u64:7>]{}
-										}
-									}
-									Tooltip[IsSome<u8:0>]{}
-									ContextMenu[IsSome<u8:0>]{}
-									Resource[IsSome<u8:1>]
-									{
-										Data[Uuid<uuid:d09b7bc5-17e0-4143-b092-77b3386e5dbc>]{}
-									}
-									OriginalHandleInResource[Index<u32:4>Generation<u32:1>]{}
-								}
-								FormattedText[]
-								{
-									Brush[Flags<u8:1>]
-									{
-										Value[Id<u32:0>]
-										{
-											0[R<u8:190>G<u8:190>B<u8:190>A<u8:255>]{}
-										}
-									}
-									Runs[Length<u32:0>]{}
-								}
-							}
-						}
-					}
-				}
 			}
 			FreeStack[Length<u32:0>]{}
 		}
@@ -1378,9 +932,9 @@ __ROOT__[]
 		}
 		KeyboardModifiers[Alt<bool:false>Shift<bool:false>Control<bool:false>System<bool:false>]{}
 		CursorIcon[Id<u32:0>]{}
-		StandardMaterial[Uuid<uuid:f29af58e-6812-4ee6-a33b-71575799b3eb>]
+		StandardMaterial[Uuid<uuid:b26eaa39-fd43-4670-b887-134e88ed0f3b>]
 		{
-			Embedded[Id<u64:8>]
+			Embedded[Id<u64:7>]
 			{
 				ArcData[TypeUuid<uuid:0e54fe44-0c58-4108-a681-d6eefc88c234>]
 				{
