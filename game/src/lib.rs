@@ -17,13 +17,24 @@ use fyrox::{
         UiNode, UserInterface,
     },
     plugin::{Plugin, PluginContext, PluginRegistrationContext},
-    scene::Scene,
+    scene::{
+        base::BaseBuilder,
+        dim2::{
+            collider::{ColliderBuilder, ColliderShape},
+            rigidbody::RigidBodyBuilder,
+        },
+        graph::Graph,
+        rigidbody::RigidBodyType,
+        Scene,
+    },
 };
 
 use std::path::Path;
 
 // Re-export the engine.
 pub use fyrox;
+
+use crate::bugster::{Bugsters, PersonalityType};
 
 //our scripts
 pub mod bugster;
@@ -54,6 +65,11 @@ impl Plugin for Game {
         context
             .async_scene_loader
             .request(scene_path.unwrap_or("data/scene.rgs"));
+
+        //load the bugster
+        context
+            .async_scene_loader
+            .request(scene_path.unwrap_or("data/Scenes/busters.rgs"));
     }
 
     fn on_deinit(&mut self, _context: PluginContext) {
@@ -75,29 +91,66 @@ impl Plugin for Game {
         // Handle UI events here.
     }
 
-    fn on_scene_begin_loading(&mut self, _path: &Path, ctx: &mut PluginContext) {
-        if self.scene.is_some() {
-            ctx.scenes.remove(self.scene);
-        }
-    }
+    fn on_scene_begin_loading(&mut self, _path: &Path, ctx: &mut PluginContext) {}
 
     fn on_scene_loaded(
         &mut self,
-        _path: &Path,
+        path: &Path,
         scene: Handle<Scene>,
         _data: &[u8],
         context: &mut PluginContext,
     ) {
-        self.scene = scene;
+        Log::info(format!("Path {}", path.display()).as_str());
+
+        //set main scene
+        if path == Path::new("data/scene.rgs") {
+            self.scene = scene;
+            //add our bugster to the scene
+            add_bugster(context, scene, PersonalityType::Cooperative);
+        }
+
+        if path == Path::new("data/Scenes/bugster.rgs") {}
     }
 }
 
 //adds a textbox to the UI, returns the UI handle to be used later
-fn add_textbox(context: &mut PluginContext) -> Handle<UserInterface> {
+fn add_textbox(context: &mut PluginContext) -> Handle<UiNode> {
     let mut ui = UserInterface::new(Vector2::new(1024.0, 768.0));
     let textbox =
         TextBoxBuilder::new(WidgetBuilder::new().with_foreground(Brush::Solid(Color::RED).into()))
             .with_text("10")
             .build(&mut ui.build_ctx());
-    context.user_interfaces.add(ui)
+    context.user_interfaces.add(ui);
+    textbox
+}
+
+//creates the bugster
+fn add_bugster(context: &mut PluginContext, scene: Handle<Scene>, personality: PersonalityType) {
+    //create our rigid body
+    let node_handle = {
+        let graph = &mut context.scenes.try_get_mut(scene).unwrap().graph;
+
+        RigidBodyBuilder::new(
+            BaseBuilder::new().with_children(&[ColliderBuilder::new(BaseBuilder::new())
+                .with_shape(ColliderShape::Cuboid(
+                    fyrox::scene::dim2::collider::CuboidShape {
+                        half_extents: Vector2::new(0.5, 0.5),
+                    },
+                ))
+                .build(graph)]),
+        )
+        .with_mass(1.0)
+        .with_lin_vel(Vector2::new(0.0, 0.0))
+        .with_ang_damping(0.0)
+        .with_gravity_scale(0.0)
+        .with_rotation_locked(true)
+        .with_can_sleep(false)
+        .with_body_type(RigidBodyType::Dynamic)
+        .build(graph)
+    };
+
+    //add out text box for each of our bugster
+    let textbox = add_textbox(context);
+    let graph = &mut context.scenes.try_get_mut(scene).unwrap().graph;
+    graph[node_handle].add_script(Bugsters::new(10, personality, textbox));
 }

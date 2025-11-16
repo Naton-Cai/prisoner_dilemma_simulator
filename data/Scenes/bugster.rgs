@@ -124,6 +124,7 @@ __ROOT__[]
 													Data[Healthpoints<i64:0>Speed<f32:0>XSpeed<f32:0>YSpeed<f32:0>TimeSinceLastChange<f32:0>ChangeInterval<f32:0>]
 													{
 														Personality[Id<u32:1>]{}
+														UiHandle[Index<u32:0>Generation<u32:0>]{}
 													}
 												}
 											}
@@ -245,7 +246,7 @@ __ROOT__[]
 						{
 							ArcData[Paused<bool:false>]
 							{
-								Listener[Basis<mat3:-1; 0; 0; 0; 1; 0; 0; 0; 1>Position<vec3f32:0; 1; -3>]{}
+								Listener[Basis<mat3:-1; 0; 0; 0; 1; 0; 0; 0; 1>Position<vec3f32:0; 0; -3>]{}
 								Sources[]
 								{
 									Records[Length<u32:0>]{}

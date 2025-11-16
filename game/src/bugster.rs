@@ -57,17 +57,24 @@ pub struct Bugsters {
     change_interval: f32,
 }
 
-impl ScriptTrait for Bugsters {
-    fn on_init(&mut self, _context: &mut ScriptContext) {
-        self.healthpoints = 10;
-        self.speed = MAX_SPEED;
-        self.x_speed = 0.0;
-        self.y_speed = 0.0;
-        self.personality = PersonalityType::Greedy;
-        self.time_since_last_change = 2.0;
-        self.change_interval = 1.0;
-        self.ui_handle = Handle::NONE;
+impl Bugsters {
+    //create a new bugster with the passed in args
+    pub fn new(healthpoints: i64, personality: PersonalityType, ui_handle: Handle<UiNode>) -> Self {
+        Self {
+            healthpoints,
+            personality,
+            ui_handle,
+            speed: MAX_SPEED,
+            x_speed: 0.0,
+            y_speed: 0.0,
+            time_since_last_change: 2.0,
+            change_interval: 1.0,
+        }
     }
+}
+
+impl ScriptTrait for Bugsters {
+    fn on_init(&mut self, _context: &mut ScriptContext) {}
 
     fn on_start(&mut self, context: &mut ScriptContext) {
         //set the texture on start
@@ -106,8 +113,8 @@ impl ScriptTrait for Bugsters {
                 //set a new random change interval
                 self.change_interval = rand::random_range(MIN_WAIT_TIME..=MAX_WAIT_TIME);
                 //log the new speeds
-                //Log::info(format!("Bugster X_speed: {}", self.x_speed).as_str());
-                //Log::info(format!("Bugster Y_speed: {}", self.y_speed).as_str());
+                Log::info(format!("Bugster X_speed: {}", self.x_speed).as_str());
+                Log::info(format!("Bugster Y_speed: {}", self.y_speed).as_str());
 
                 //apply the new speeds as an impulse to the rigid body
                 rigid_body.apply_impulse(Vector2::new(self.x_speed, self.y_speed));
