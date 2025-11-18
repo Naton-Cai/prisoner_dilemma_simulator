@@ -3,27 +3,22 @@
 use fyrox::graph::prelude::*;
 use fyrox::{
     core::{
-        algebra::Vector2, color::Color, log::Log, pool::Handle, reflect::prelude::*,
+        algebra::{Vector2, Vector3},
+        color::Color,
+        log::Log,
+        pool::Handle,
+        reflect::prelude::*,
         visitor::prelude::*,
     },
-    event::Event,
-    gui::{
-        brush::Brush,
-        button::{ButtonBuilder, ButtonMessage},
-        message::UiMessage,
-        text::TextBuilder,
-        text_box::TextBoxBuilder,
-        widget::WidgetBuilder,
-        UiNode, UserInterface,
-    },
+    gui::UserInterface,
     plugin::{Plugin, PluginContext, PluginRegistrationContext},
     scene::{
         base::BaseBuilder,
+        collider::{BitMask, InteractionGroups},
         dim2::{
             collider::{ColliderBuilder, ColliderShape},
             rigidbody::RigidBodyBuilder,
         },
-        graph::Graph,
         rigidbody::RigidBodyType,
         Scene,
     },
@@ -38,7 +33,6 @@ use crate::bugster::{Bugsters, PersonalityType};
 
 //our scripts
 pub mod bugster;
-pub mod bugster_sprite;
 
 #[derive(Default, Visit, Reflect, Debug)]
 #[reflect(non_cloneable)]
@@ -53,11 +47,6 @@ impl Plugin for Game {
             .serialization_context
             .script_constructors
             .add::<bugster::Bugsters>("Bugsters");
-
-        context
-            .serialization_context
-            .script_constructors
-            .add::<bugster_sprite::BugsterSprite>("BugsterSprite");
     }
 
     fn init(&mut self, scene_path: Option<&str>, context: PluginContext) {
@@ -66,30 +55,12 @@ impl Plugin for Game {
             .async_scene_loader
             .request(scene_path.unwrap_or("data/scene.rgs"));
 
-        //load the bugster
         context
-            .async_scene_loader
-            .request(scene_path.unwrap_or("data/Scenes/busters.rgs"));
-    }
-
-    fn on_deinit(&mut self, _context: PluginContext) {
-        // Do a cleanup here.
+            .user_interfaces
+            .add(UserInterface::new(Vector2::new(1024.0, 768.0)));
     }
 
     fn update(&mut self, context: &mut PluginContext) {}
-
-    fn on_os_event(&mut self, _event: &Event<()>, _context: PluginContext) {
-        // Do something on OS event here.
-    }
-
-    fn on_ui_message(
-        &mut self,
-        _context: &mut PluginContext,
-        _message: &UiMessage,
-        _ui_handle: Handle<UserInterface>,
-    ) {
-        // Handle UI events here.
-    }
 
     fn on_scene_begin_loading(&mut self, _path: &Path, ctx: &mut PluginContext) {}
 
@@ -106,51 +77,67 @@ impl Plugin for Game {
         if path == Path::new("data/scene.rgs") {
             self.scene = scene;
             //add our bugster to the scene
-            add_bugster(context, scene, PersonalityType::Cooperative);
+            add_bugster(context, scene, PersonalityType::Cooperative, 0.0, 0.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Greedy, 2.0, 3.0);
         }
 
         if path == Path::new("data/Scenes/bugster.rgs") {}
     }
 }
 
-//adds a textbox to the UI, returns the UI handle to be used later
-fn add_textbox(context: &mut PluginContext) -> Handle<UiNode> {
-    let mut ui = UserInterface::new(Vector2::new(1024.0, 768.0));
-    let textbox =
-        TextBoxBuilder::new(WidgetBuilder::new().with_foreground(Brush::Solid(Color::RED).into()))
-            .with_text("10")
-            .build(&mut ui.build_ctx());
-    context.user_interfaces.add(ui);
-    textbox
-}
-
 //creates the bugster
-fn add_bugster(context: &mut PluginContext, scene: Handle<Scene>, personality: PersonalityType) {
-    //create our rigid body
-    let node_handle = {
-        let graph = &mut context.scenes.try_get_mut(scene).unwrap().graph;
-
-        RigidBodyBuilder::new(
-            BaseBuilder::new().with_children(&[ColliderBuilder::new(BaseBuilder::new())
-                .with_shape(ColliderShape::Cuboid(
-                    fyrox::scene::dim2::collider::CuboidShape {
-                        half_extents: Vector2::new(0.5, 0.5),
-                    },
-                ))
-                .build(graph)]),
-        )
-        .with_mass(1.0)
-        .with_lin_vel(Vector2::new(0.0, 0.0))
-        .with_ang_damping(0.0)
-        .with_gravity_scale(0.0)
-        .with_rotation_locked(true)
-        .with_can_sleep(false)
-        .with_body_type(RigidBodyType::Dynamic)
-        .build(graph)
-    };
-
-    //add out text box for each of our bugster
-    let textbox = add_textbox(context);
+fn add_bugster(
+    context: &mut PluginContext,
+    scene: Handle<Scene>,
+    personality: PersonalityType,
+    x: f32,
+    y: f32,
+) {
     let graph = &mut context.scenes.try_get_mut(scene).unwrap().graph;
-    graph[node_handle].add_script(Bugsters::new(10, personality, textbox));
+
+    let collision_body = ColliderBuilder::new(BaseBuilder::new())
+        .with_shape(ColliderShape::Cuboid(
+            fyrox::scene::dim2::collider::CuboidShape {
+                half_extents: Vector2::new(0.5, 0.5),
+            },
+        ))
+        .build(graph);
+    let detector_body = ColliderBuilder::new(BaseBuilder::new())
+        .with_shape(ColliderShape::Cuboid(
+            fyrox::scene::dim2::collider::CuboidShape {
+                half_extents: Vector2::new(0.75, 0.75),
+            },
+        ))
+        .with_collision_groups(InteractionGroups::new(
+            BitMask(0b0000_0000_0000_0000_0000_0000_0000_0010),
+            BitMask(0b0000_0000_0000_0000_0000_0000_0000_0010),
+        ))
+        .with_sensor(true)
+        .build(graph);
+
+    //create our rigid body
+    let node_handle =
+        RigidBodyBuilder::new(BaseBuilder::new().with_children(&[collision_body, detector_body]))
+            .with_mass(1.0)
+            .with_lin_vel(Vector2::new(0.0, 0.0))
+            .with_ang_damping(0.0)
+            .with_gravity_scale(0.0)
+            .with_rotation_locked(true)
+            .with_can_sleep(false)
+            .with_body_type(RigidBodyType::Dynamic)
+            .build(graph);
+
+    //then attach the script to it
+    graph[node_handle].add_script(Bugsters::new(
+        10,
+        personality,
+        collision_body,
+        detector_body,
+    ));
+
+    //change the nodes position
+    graph[node_handle]
+        .local_transform_mut()
+        .set_position(Vector3::new(x, y, 0.0));
 }

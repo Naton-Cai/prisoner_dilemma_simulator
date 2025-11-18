@@ -287,7 +287,7 @@ __ROOT__[]
 									IsSensor[Value<bool:false>Flags<u8:1>]{}
 									CollisionGroups[Flags<u8:1>]
 									{
-										Value[Memberships<u32:4294967295>Filter<u32:4294967295>]{}
+										Value[Memberships<u32:4294967293>Filter<u32:4294967293>]{}
 									}
 									SolverGroups[Flags<u8:1>]
 									{
@@ -525,7 +525,7 @@ __ROOT__[]
 									IsSensor[Value<bool:false>Flags<u8:1>]{}
 									CollisionGroups[Flags<u8:1>]
 									{
-										Value[Memberships<u32:4294967295>Filter<u32:4294967295>]{}
+										Value[Memberships<u32:4294967293>Filter<u32:4294967293>]{}
 									}
 									SolverGroups[Flags<u8:1>]
 									{
@@ -753,7 +753,7 @@ __ROOT__[]
 									IsSensor[Value<bool:false>Flags<u8:1>]{}
 									CollisionGroups[Flags<u8:1>]
 									{
-										Value[Memberships<u32:4294967295>Filter<u32:4294967295>]{}
+										Value[Memberships<u32:4294967293>Filter<u32:4294967293>]{}
 									}
 									SolverGroups[Flags<u8:1>]
 									{
@@ -981,7 +981,7 @@ __ROOT__[]
 									IsSensor[Value<bool:false>Flags<u8:1>]{}
 									CollisionGroups[Flags<u8:1>]
 									{
-										Value[Memberships<u32:4294967295>Filter<u32:4294967295>]{}
+										Value[Memberships<u32:4294967293>Filter<u32:4294967293>]{}
 									}
 									SolverGroups[Flags<u8:1>]
 									{
@@ -1179,7 +1179,7 @@ __ROOT__[]
 						{
 							ArcData[Paused<bool:false>]
 							{
-								Listener[Basis<mat3:-1; 0; 0; 0; 1; 0; 0; 0; 1>Position<vec3f32:-0.8724791; -0.72602725; -3>]{}
+								Listener[Basis<mat3:-1; 0; 0; 0; 1; 0; 0; 0; 1>Position<vec3f32:0; 0; -3>]{}
 								Sources[]
 								{
 									Records[Length<u32:0>]{}

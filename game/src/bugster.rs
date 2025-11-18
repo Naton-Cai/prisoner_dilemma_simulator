@@ -1,19 +1,22 @@
 use fyrox::{
     asset::{manager::ResourceManager, untyped::ResourceKind},
     core::{
-        algebra::{Vector2, Vector3},
+        algebra::{Point2, Vector2, Vector3},
         log::Log,
-        pool::Handle,
+        pool::{handle, Handle},
         reflect::prelude::*,
         type_traits::prelude::*,
         uuid,
         visitor::prelude::*,
     },
-    gui::{texture::Texture, UiNode},
+    gui::texture::Texture,
     material::{Material, MaterialResource},
     scene::{
+        self,
         base::BaseBuilder,
         dim2::{
+            collider::Collider,
+            physics,
             rectangle::{Rectangle, RectangleBuilder},
             rigidbody::RigidBody,
         },
@@ -49,27 +52,97 @@ impl Default for PersonalityType {
 pub struct Bugsters {
     pub healthpoints: i64,
     pub personality: PersonalityType,
-    pub ui_handle: Handle<UiNode>, //keeps track of the UI health element
     speed: f32,
     x_speed: f32,
     y_speed: f32,
     time_since_last_change: f32,
     change_interval: f32,
+    collision_handle: Handle<Node>,
+    detector_handle: Handle<Node>,
 }
 
 impl Bugsters {
     //create a new bugster with the passed in args
-    pub fn new(healthpoints: i64, personality: PersonalityType, ui_handle: Handle<UiNode>) -> Self {
+    pub fn new(
+        healthpoints: i64,
+        personality: PersonalityType,
+        collision: Handle<Node>,
+        detector: Handle<Node>,
+    ) -> Self {
         Self {
             healthpoints,
             personality,
-            ui_handle,
             speed: MAX_SPEED,
             x_speed: 0.0,
             y_speed: 0.0,
             time_since_last_change: 2.0,
             change_interval: 1.0,
+            collision_handle: collision,
+            detector_handle: detector,
         }
+    }
+
+    fn entity_contact(&mut self, context: &mut ScriptContext) {
+        let graph = &context.scene.graph;
+        let node = &graph[self.detector_handle];
+
+        let sensor = node.as_collider2d();
+        for intersection in sensor
+            .intersects(&context.scene.graph.physics2d)
+            .filter(|i| i.has_any_active_contact)
+        {
+            Log::info(
+                format!(
+                    "COLLIDE {:?}, {:?}, {:?}",
+                    intersection, self.detector_handle, self.collision_handle
+                )
+                .as_str(),
+            );
+        }
+    }
+
+    //sets the texture of the bugster based on its personality type
+    fn set_texture(
+        &mut self,
+        personality: PersonalityType,
+        graph: &mut Graph,
+        resource_manager: ResourceManager,
+    ) -> Handle<Node> {
+        let mut material = Material::standard_2d();
+        match personality {
+            PersonalityType::Cooperative => {
+                material.bind(
+                    "diffuseTexture",
+                    Some(resource_manager.request::<Texture>(COOPERATIVE_SPRITE_PATH)),
+                );
+                Log::info("Set sprite to cooperative texture");
+            }
+            PersonalityType::Greedy => {
+                material.bind(
+                    "diffuseTexture",
+                    Some(resource_manager.request::<Texture>(GREEDY_SPRITE_PATH)),
+                );
+                Log::info("Set sprite to greedy texture");
+            }
+        }
+
+        let material_resource = MaterialResource::new_ok(
+            uuid::Uuid::new_v4(), // Generate a random UUID for the resource
+            ResourceKind::Embedded,
+            material,
+        );
+
+        RectangleBuilder::new(
+            BaseBuilder::new().with_local_transform(
+                TransformBuilder::new()
+                    // Size of the rectangle is defined only by scale.
+                    .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
+                    .with_local_position(Vector3::new(0.0, 0.0, 0.0))
+                    .build(),
+            ),
+        )
+        .with_material(material_resource)
+        .build(graph)
     }
 }
 
@@ -79,7 +152,7 @@ impl ScriptTrait for Bugsters {
     fn on_start(&mut self, context: &mut ScriptContext) {
         //set the texture on start
         let parent_handle = context.handle;
-        let child_handle = set_texture(
+        let child_handle = self.set_texture(
             self.personality.clone(),
             &mut context.scene.graph,
             context.resource_manager.clone(),
@@ -102,6 +175,8 @@ impl ScriptTrait for Bugsters {
     fn on_update(&mut self, context: &mut ScriptContext) {
         self.time_since_last_change += context.dt;
 
+        self.entity_contact(context);
+
         if let Some(rigid_body) = context.scene.graph[context.handle].cast_mut::<RigidBody>() {
             //when the time since last change exceeds the change interval, change direction and apply impulse
             if self.time_since_last_change >= self.change_interval {
@@ -121,47 +196,4 @@ impl ScriptTrait for Bugsters {
             }
         }
     }
-}
-
-//sets the texture of the bugster based on its personality type
-fn set_texture(
-    personality: PersonalityType,
-    graph: &mut Graph,
-    resource_manager: ResourceManager,
-) -> Handle<Node> {
-    let mut material = Material::standard_2d();
-    match personality {
-        PersonalityType::Cooperative => {
-            material.bind(
-                "diffuseTexture",
-                Some(resource_manager.request::<Texture>(COOPERATIVE_SPRITE_PATH)),
-            );
-            Log::info("Set sprite to cooperative texture");
-        }
-        PersonalityType::Greedy => {
-            material.bind(
-                "diffuseTexture",
-                Some(resource_manager.request::<Texture>(GREEDY_SPRITE_PATH)),
-            );
-            Log::info("Set sprite to greedy texture");
-        }
-    }
-
-    let material_resource = MaterialResource::new_ok(
-        uuid::Uuid::new_v4(), // Generate a random UUID for the resource
-        ResourceKind::Embedded,
-        material,
-    );
-
-    RectangleBuilder::new(
-        BaseBuilder::new().with_local_transform(
-            TransformBuilder::new()
-                // Size of the rectangle is defined only by scale.
-                .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
-                .with_local_position(Vector3::new(0.0, 0.0, 0.0))
-                .build(),
-        ),
-    )
-    .with_material(material_resource)
-    .build(graph)
 }
