@@ -7,7 +7,6 @@ name = "PrisonerDilemmaSimulator"
 version = "0.1.0"
 dependencies = [
  "fyrox",
- "fyrox-graph 0.36.2",
  "rand 0.9.2",
 ]
 
@@ -97,27 +96,6 @@ dependencies = [
 
 [[package]]
 name = "android-activity"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee91c0c2905bae44f84bfa4e044536541df26b7703fd0888deeb9060fcc44289"
-dependencies = [
- "android-properties",
- "bitflags 2.10.0",
- "cc",
- "cesu8",
- "jni",
- "jni-sys",
- "libc",
- "log",
- "ndk 0.8.0",
- "ndk-context",
- "ndk-sys 0.5.0+25.2.9519653",
- "num_enum",
- "thiserror 1.0.69",
-]
-
-[[package]]
-name = "android-activity"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ef6978589202a00cd7e118380c448a08b6ed394c3a8df3a430d0898e3a42d046"
@@ -130,9 +108,9 @@ dependencies = [
  "jni-sys",
  "libc",
  "log",
- "ndk 0.9.0",
+ "ndk",
  "ndk-context",
- "ndk-sys 0.6.0+11769913",
+ "ndk-sys",
  "num_enum",
  "thiserror 1.0.69",
 ]
@@ -437,12 +415,6 @@ checksum = "47c8fbc0f831f4519fe8b810b6a7a91410ec83031b8233f730a0480029f6a23f"
 dependencies = [
  "arrayvec",
 ]
-
-[[package]]
-name = "base64"
-version = "0.21.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
 
 [[package]]
 name = "base64"
@@ -1554,8 +1526,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f3385a82e986f84bc0fc256341f907082c19b1ac24816d3dffcfbeaccc05c5a3"
 dependencies = [
  "fxhash",
- "fyrox-core 1.0.0-rc.1",
- "fyrox-resource 1.0.0-rc.1",
+ "fyrox-core",
+ "fyrox-resource",
  "spade",
  "strum",
  "strum_macros",
@@ -1578,44 +1550,10 @@ version = "1.0.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b1826f90b01553807663d46f4ad130e696eaf6c66ee0ad40126fb05916ac51a"
 dependencies = [
- "fyrox-core 1.0.0-rc.1",
- "fyrox-resource 1.0.0-rc.1",
+ "fyrox-core",
+ "fyrox-resource",
  "fyrox-ui",
  "serde",
-]
-
-[[package]]
-name = "fyrox-core"
-version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57efa70d210866d72add856346987703e6b9478ae7ac98c29ce4ab1791f6f394"
-dependencies = [
- "android-activity 0.5.2",
- "arrayvec",
- "base64 0.22.1",
- "bincode",
- "bitflags 2.10.0",
- "bytemuck",
- "byteorder",
- "futures",
- "fxhash",
- "fyrox-core-derive 0.36.2",
- "fyrox-math 0.36.2",
- "instant",
- "js-sys",
- "lazy_static",
- "memoffset",
- "nalgebra 0.33.2",
- "notify",
- "num-traits",
- "once_cell",
- "parking_lot",
- "rand 0.8.5",
- "serde",
- "uuid",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
 ]
 
 [[package]]
@@ -1624,17 +1562,17 @@ version = "1.0.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ec14e01c1afa0cce76b4bba9354694106c208cc276f8b2bf2a38d46a2c2888c"
 dependencies = [
- "android-activity 0.6.0",
+ "android-activity",
  "arrayvec",
- "base64 0.22.1",
+ "base64",
  "bincode",
  "bitflags 2.10.0",
  "bytemuck",
  "byteorder",
  "futures",
  "fxhash",
- "fyrox-core-derive 1.0.0-rc.1",
- "fyrox-math 1.0.0-rc.1",
+ "fyrox-core-derive",
+ "fyrox-math",
  "instant",
  "js-sys",
  "lazy_static",
@@ -1652,20 +1590,6 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
-]
-
-[[package]]
-name = "fyrox-core-derive"
-version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca6888306134df14bbabea7b3ad22a402777741b19ed6425aa9754e5bde294c4"
-dependencies = [
- "convert_case",
- "darling",
- "fxhash",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
 ]
 
 [[package]]
@@ -1693,24 +1617,13 @@ dependencies = [
 
 [[package]]
 name = "fyrox-graph"
-version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7de9303f1a259fcf20aec164d52cb29d81cb37747ee9df000ec304f61c6c98d8"
-dependencies = [
- "fxhash",
- "fyrox-core 0.36.2",
- "fyrox-resource 0.36.2",
-]
-
-[[package]]
-name = "fyrox-graph"
 version = "1.0.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77f2cfcfd83e905d0ccd1c6bd873d901e58bac6056a223a8d518cfc00401d874"
 dependencies = [
  "fxhash",
- "fyrox-core 1.0.0-rc.1",
- "fyrox-resource 1.0.0-rc.1",
+ "fyrox-core",
+ "fyrox-resource",
 ]
 
 [[package]]
@@ -1720,7 +1633,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c6daf3e6ff8dffd22c6b6aedcb2dec6ef64d994ae74604b3650b72418fbe9cd"
 dependencies = [
  "bytemuck",
- "fyrox-core 1.0.0-rc.1",
+ "fyrox-core",
  "serde",
  "strum",
  "strum_macros",
@@ -1733,7 +1646,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4b3e39b9ee37b6365e9cb827f9d20ff03e922adad04fc1edda13a28a9050e4f0"
 dependencies = [
  "fxhash",
- "fyrox-core 1.0.0-rc.1",
+ "fyrox-core",
  "fyrox-graphics",
  "glow",
  "glutin",
@@ -1752,7 +1665,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0705a801124d0c8d8f2389e8f91163a7bea2fdaf77bc15c17b7ba3888d75b51d"
 dependencies = [
  "approx",
- "base64 0.22.1",
+ "base64",
  "bitflags 2.10.0",
  "bytemuck",
  "cargo_metadata",
@@ -1760,13 +1673,13 @@ dependencies = [
  "fxhash",
  "fyrox-animation",
  "fyrox-autotile",
- "fyrox-core 1.0.0-rc.1",
- "fyrox-core-derive 1.0.0-rc.1",
- "fyrox-graph 1.0.0-rc.1",
+ "fyrox-core",
+ "fyrox-core-derive",
+ "fyrox-graph",
  "fyrox-graphics",
  "fyrox-graphics-gl",
  "fyrox-material",
- "fyrox-resource 1.0.0-rc.1",
+ "fyrox-resource",
  "fyrox-sound",
  "fyrox-texture",
  "fyrox-ui",
@@ -1784,7 +1697,7 @@ dependencies = [
  "rapier2d",
  "rapier3d",
  "rayon",
- "ron 0.11.0",
+ "ron",
  "rust-fuzzy-search",
  "serde",
  "serde_core",
@@ -1807,30 +1720,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "234db9a2cab8c9d7682cd4f0d2ed7c75cd4b25a4c69cc7e4878d19c65129ed33"
 dependencies = [
  "fxhash",
- "fyrox-core 1.0.0-rc.1",
+ "fyrox-core",
  "fyrox-graphics",
- "fyrox-resource 1.0.0-rc.1",
+ "fyrox-resource",
  "fyrox-texture",
  "lazy_static",
  "regex",
- "ron 0.11.0",
+ "ron",
  "serde",
  "strum",
  "strum_macros",
- "uuid",
-]
-
-[[package]]
-name = "fyrox-math"
-version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ffe76ed7ee07491c45c41122094403c57f6921beda0e8ab6ed5b8619d0101ed"
-dependencies = [
- "arrayvec",
- "bytemuck",
- "nalgebra 0.33.2",
- "num-traits",
- "rectutils 0.3.0",
  "uuid",
 ]
 
@@ -1844,22 +1743,8 @@ dependencies = [
  "bytemuck",
  "nalgebra 0.34.1",
  "num-traits",
- "rectutils 0.5.0",
+ "rectutils",
  "uuid",
-]
-
-[[package]]
-name = "fyrox-resource"
-version = "0.36.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cbee731f11e0651f6376c93c33894554525308cff605b5cb9d2b0308eaf4b9e"
-dependencies = [
- "fxhash",
- "fyrox-core 0.36.2",
- "rayon",
- "ron 0.8.1",
- "serde",
- "walkdir",
 ]
 
 [[package]]
@@ -1869,9 +1754,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c18588c8b855b2e3a062fac227979ef57cb95642fc7b84392bb160f0f01b308"
 dependencies = [
  "fxhash",
- "fyrox-core 1.0.0-rc.1",
+ "fyrox-core",
  "rayon",
- "ron 0.11.0",
+ "ron",
  "serde",
  "walkdir",
 ]
@@ -1882,8 +1767,8 @@ version = "1.0.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c69bbd7902c619632a71f166ea8de20ac36b8ea2125b06c1b3f4372d959a8055"
 dependencies = [
- "fyrox-core 1.0.0-rc.1",
- "fyrox-resource 1.0.0-rc.1",
+ "fyrox-core",
+ "fyrox-resource",
  "hound",
  "hrtf",
  "serde",
@@ -1902,8 +1787,8 @@ dependencies = [
  "ddsfile",
  "fast_image_resize",
  "fxhash",
- "fyrox-core 1.0.0-rc.1",
- "fyrox-resource 1.0.0-rc.1",
+ "fyrox-core",
+ "fyrox-resource",
  "image",
  "lazy_static",
  "serde",
@@ -1924,10 +1809,10 @@ dependencies = [
  "fontdue",
  "fxhash",
  "fyrox-animation",
- "fyrox-core 1.0.0-rc.1",
- "fyrox-graph 1.0.0-rc.1",
+ "fyrox-core",
+ "fyrox-graph",
  "fyrox-material",
- "fyrox-resource 1.0.0-rc.1",
+ "fyrox-resource",
  "fyrox-texture",
  "lazy_static",
  "notify",
@@ -1954,7 +1839,7 @@ dependencies = [
  "notify",
  "open",
  "opener",
- "ron 0.11.0",
+ "ron",
  "rust-fuzzy-search",
  "serde",
  "serde_json",
@@ -2753,7 +2638,7 @@ checksum = "1b655dabe1d88c3297dd0ad41b9816fef42714a5280fe7ce86ef42e1e6b984aa"
 dependencies = [
  "arrayvec",
  "fxhash",
- "fyrox-math 1.0.0-rc.1",
+ "fyrox-math",
  "nalgebra 0.34.1",
  "rayon",
  "uvgen",
@@ -2906,23 +2791,6 @@ dependencies = [
 
 [[package]]
 name = "nalgebra"
-version = "0.33.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26aecdf64b707efd1310e3544d709c5c0ac61c13756046aaaba41be5c4f66a3b"
-dependencies = [
- "approx",
- "bytemuck",
- "matrixmultiply",
- "nalgebra-macros 0.2.2",
- "num-complex",
- "num-rational",
- "num-traits",
- "simba 0.9.1",
- "typenum",
-]
-
-[[package]]
-name = "nalgebra"
 version = "0.34.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4d5b3eff5cd580f93da45e64715e8c20a3996342f1e466599cf7a267a0c2f5f"
@@ -2946,24 +2814,13 @@ dependencies = [
  "glam 0.29.3",
  "glam 0.30.9",
  "matrixmultiply",
- "nalgebra-macros 0.3.0",
+ "nalgebra-macros",
  "num-complex",
  "num-rational",
  "num-traits",
  "serde",
  "simba 0.9.1",
  "typenum",
-]
-
-[[package]]
-name = "nalgebra-macros"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "254a5372af8fc138e36684761d3c0cdb758a4410e938babcff1c860ce14ddbfc"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.110",
 ]
 
 [[package]]
@@ -2979,20 +2836,6 @@ dependencies = [
 
 [[package]]
 name = "ndk"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2076a31b7010b17a38c01907c45b945e8f11495ee4dd588309718901b1f7a5b7"
-dependencies = [
- "bitflags 2.10.0",
- "jni-sys",
- "log",
- "ndk-sys 0.5.0+25.2.9519653",
- "num_enum",
- "thiserror 1.0.69",
-]
-
-[[package]]
-name = "ndk"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3f42e7bbe13d351b6bead8286a43aac9534b82bd3cc43e47037f012ebfd62d4"
@@ -3000,7 +2843,7 @@ dependencies = [
  "bitflags 2.10.0",
  "jni-sys",
  "log",
- "ndk-sys 0.6.0+11769913",
+ "ndk-sys",
  "num_enum",
  "raw-window-handle",
  "thiserror 1.0.69",
@@ -3011,15 +2854,6 @@ name = "ndk-context"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "27b02d87554356db9e9a873add8782d4ea6e3e58ea071a9adb9a2e8ddb884a8b"
-
-[[package]]
-name = "ndk-sys"
-version = "0.5.0+25.2.9519653"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c196769dd60fd4f363e11d948139556a344e79d451aeb2fa2fd040738ef7691"
-dependencies = [
- "jni-sys",
-]
 
 [[package]]
 name = "ndk-sys"
@@ -4075,17 +3909,6 @@ dependencies = [
 
 [[package]]
 name = "rectutils"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88d788f1694f83d7f96ead91054773875cec8ebb1b3a0bc0bd52c23608779acd"
-dependencies = [
- "arrayvec",
- "nalgebra 0.33.2",
- "num-traits",
-]
-
-[[package]]
-name = "rectutils"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d8f59f5c269d9270f517d0292c88d6f7862d2c633e40ee26d48d4815061c86ae"
@@ -4167,23 +3990,11 @@ checksum = "4e27ee8bb91ca0adcf0ecb116293afa12d393f9c2b9b9cd54d33e8078fe19839"
 
 [[package]]
 name = "ron"
-version = "0.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b91f7eff05f748767f183df4320a63d6936e9c6107d97c9e6bdd9784f4289c94"
-dependencies = [
- "base64 0.21.7",
- "bitflags 2.10.0",
- "serde",
- "serde_derive",
-]
-
-[[package]]
-name = "ron"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "db09040cc89e461f1a265139777a2bde7f8d8c67c4936f700c63ce3e2904d468"
 dependencies = [
- "base64 0.22.1",
+ "base64",
  "bitflags 2.10.0",
  "serde",
  "serde_derive",
@@ -4975,7 +4786,7 @@ dependencies = [
  "core-foundation-sys",
  "coreaudio-sys",
  "js-sys",
- "ndk 0.9.0",
+ "ndk",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -5220,7 +5031,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "19cfc482ebab7a871ad0702679fdb8bf60497ec645f98dfa02c0669e0a2d401c"
 dependencies = [
  "nalgebra 0.34.1",
- "rectutils 0.5.0",
+ "rectutils",
 ]
 
 [[package]]
@@ -5835,7 +5646,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c66d4b9ed69c4009f6321f762d6e61ad8a2389cd431b97cb1e146812e9e6c732"
 dependencies = [
  "ahash",
- "android-activity 0.6.0",
+ "android-activity",
  "atomic-waker",
  "bitflags 2.10.0",
  "block2",
@@ -5850,7 +5661,7 @@ dependencies = [
  "js-sys",
  "libc",
  "memmap2",
- "ndk 0.9.0",
+ "ndk",
  "objc2 0.5.2",
  "objc2-app-kit 0.2.2",
  "objc2-foundation 0.2.2",

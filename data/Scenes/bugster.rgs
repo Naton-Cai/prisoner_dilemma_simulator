@@ -244,7 +244,7 @@ __ROOT__[]
 					{
 						Data[Id<u64:1>]
 						{
-							ArcData[Paused<bool:false>]
+							ArcData[Paused<bool:true>]
 							{
 								Listener[Basis<mat3:-1; 0; 0; 0; 1; 0; 0; 0; 1>Position<vec3f32:0; 0; -3>]{}
 								Sources[]

@@ -79,7 +79,16 @@ impl Plugin for Game {
             //add our bugster to the scene
             add_bugster(context, scene, PersonalityType::Cooperative, 0.0, 0.0);
             add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
-            add_bugster(context, scene, PersonalityType::Greedy, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
+            add_bugster(context, scene, PersonalityType::Cooperative, 2.0, 3.0);
         }
 
         if path == Path::new("data/Scenes/bugster.rgs") {}
@@ -106,7 +115,7 @@ fn add_bugster(
     let detector_body = ColliderBuilder::new(BaseBuilder::new())
         .with_shape(ColliderShape::Cuboid(
             fyrox::scene::dim2::collider::CuboidShape {
-                half_extents: Vector2::new(0.75, 0.75),
+                half_extents: Vector2::new(0.55, 0.55),
             },
         ))
         .with_collision_groups(InteractionGroups::new(
@@ -132,6 +141,7 @@ fn add_bugster(
     graph[node_handle].add_script(Bugsters::new(
         10,
         personality,
+        node_handle,
         collision_body,
         detector_body,
     ));

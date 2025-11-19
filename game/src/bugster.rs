@@ -1,24 +1,23 @@
 use fyrox::{
     asset::{manager::ResourceManager, untyped::ResourceKind},
     core::{
-        algebra::{Point2, Vector2, Vector3},
-        log::Log,
-        pool::{handle, Handle},
+        algebra::{Vector2, Vector3},
+        log::{self, Log},
+        pool::Handle,
         reflect::prelude::*,
         type_traits::prelude::*,
-        uuid,
+        uuid::{self, timestamp::context},
         visitor::prelude::*,
     },
+    graph::{BaseSceneGraph, SceneGraph},
     gui::texture::Texture,
     material::{Material, MaterialResource},
     scene::{
-        self,
         base::BaseBuilder,
         dim2::{
             collider::Collider,
-            physics,
-            rectangle::{Rectangle, RectangleBuilder},
-            rigidbody::RigidBody,
+            rectangle::RectangleBuilder,
+            rigidbody::{self, RigidBody},
         },
         graph::Graph,
         node::Node,
@@ -26,11 +25,18 @@ use fyrox::{
     },
     script::{ScriptContext, ScriptTrait},
 };
+
 const COOPERATIVE_SPRITE_PATH: &str = "data/sprites/bugster_cooperative.png";
 const GREEDY_SPRITE_PATH: &str = "data/sprites/bugster_greedy.png";
-const MAX_SPEED: f32 = 3.0;
+const MAX_SPEED: f32 = 15.0;
 const MAX_WAIT_TIME: f32 = 5.0;
 const MIN_WAIT_TIME: f32 = 3.0;
+
+//our values to calcuate health gain
+const GREEDGREED_HEALTH_GAIN: i64 = -1;
+const GREEDCOOP_HEALTH_GAIN: i64 = 3;
+const COOPGREED_HEALTH_GAIN: i64 = -2;
+const COOPCOOP_HEALTH_GAIN: i64 = 1;
 
 //our enum that determines the personality type of our bugster
 #[derive(Visit, Reflect, Debug, Clone)]
@@ -55,8 +61,11 @@ pub struct Bugsters {
     speed: f32,
     x_speed: f32,
     y_speed: f32,
-    time_since_last_change: f32,
-    change_interval: f32,
+    move_time_since_last_change: f32,
+    move_change_interval: f32,
+    collision_time_since_last_change: f32,
+    collision_change_interval: f32,
+    rigid_body_handle: Handle<Node>,
     collision_handle: Handle<Node>,
     detector_handle: Handle<Node>,
 }
@@ -66,6 +75,7 @@ impl Bugsters {
     pub fn new(
         healthpoints: i64,
         personality: PersonalityType,
+        rigid_body: Handle<Node>,
         collision: Handle<Node>,
         detector: Handle<Node>,
     ) -> Self {
@@ -75,29 +85,129 @@ impl Bugsters {
             speed: MAX_SPEED,
             x_speed: 0.0,
             y_speed: 0.0,
-            time_since_last_change: 2.0,
-            change_interval: 1.0,
+            move_time_since_last_change: 2.0,
+            move_change_interval: 1.0,
+            collision_time_since_last_change: 1.0,
+            collision_change_interval: 0.1,
+            rigid_body_handle: rigid_body,
             collision_handle: collision,
             detector_handle: detector,
         }
     }
 
+    //checks for entity collision
     fn entity_contact(&mut self, context: &mut ScriptContext) {
-        let graph = &context.scene.graph;
-        let node = &graph[self.detector_handle];
+        //gets all intersected colliders
+        let intersections: Vec<_> = {
+            let graph = &context.scene.graph;
 
-        let sensor = node.as_collider2d();
-        for intersection in sensor
-            .intersects(&context.scene.graph.physics2d)
-            .filter(|i| i.has_any_active_contact)
-        {
-            Log::info(
-                format!(
-                    "COLLIDE {:?}, {:?}, {:?}",
-                    intersection, self.detector_handle, self.collision_handle
-                )
-                .as_str(),
-            );
+            let Some(collider) = graph.try_get_of_type::<Collider>(self.detector_handle) else {
+                return;
+            };
+
+            collider
+                .intersects(&graph.physics2d)
+                .filter(|i| i.has_any_active_contact)
+                .collect()
+        };
+
+        for intersection in intersections {
+            //get the collider that this collider interesected
+            let collided = if self.detector_handle == intersection.collider1 {
+                intersection.collider2
+            } else {
+                intersection.collider1
+            };
+
+            //gets the parent of the collider which should be a rigid body
+            let parent_rigid = {
+                let graph = &context.scene.graph;
+                if let Some(collider) = graph.try_get_of_type::<Collider>(collided) {
+                    collider.parent()
+                } else {
+                    return;
+                }
+            };
+
+            //Log::info(format!(
+            //    "COLLIDE {:?}, {:?}, {:?}, {:?}",
+            //    intersection, self.detector_handle, self.collision_handle, collided
+            //));
+
+            if let Some(script) = context
+                .scene
+                .graph
+                .try_get_script_of_mut::<Bugsters>(parent_rigid)
+            {
+                script.health_calculation(self.personality.clone());
+            } else {
+                Log::err("NO BUGSTER SCRIPT FOUND");
+            }
+
+            //get the direction of where the the two colliders touch
+            let direction = {
+                let graph = &context.scene.graph;
+                let contracted_node = match graph.try_get(collided) {
+                    Some(node) => node,
+                    None => return,
+                };
+                let self_node = match graph.try_get(self.detector_handle) {
+                    Some(node) => node,
+                    None => return,
+                };
+
+                let self_position = self_node.global_position();
+                let contracted_position = contracted_node.global_position();
+
+                contracted_position - self_position
+            };
+
+            let Some(rigid_body) = context
+                .scene
+                .graph
+                .try_get_mut_of_type::<RigidBody>(self.rigid_body_handle)
+            else {
+                Log::info("Not a Rigid Body!");
+                return;
+            };
+            //use the direction apply a knockback force that knocks the two nodes away from eachother
+            rigid_body.apply_impulse(Vector2::new(direction.x * -7.0, direction.y * -7.0));
+        }
+    }
+
+    //calculates the health changes when contacting another bugster
+    pub fn health_calculation(&mut self, contact_personality: PersonalityType) {
+        Log::info(format!("Current Hp {}", self.healthpoints));
+        let personality = &self.personality;
+        match (personality, contact_personality) {
+            (PersonalityType::Greedy, PersonalityType::Greedy) => {
+                self.healthpoints += GREEDGREED_HEALTH_GAIN;
+                Log::info(format!(
+                    "Bugster gained {}, Current Hp {}",
+                    GREEDGREED_HEALTH_GAIN, self.healthpoints
+                ));
+            }
+            (PersonalityType::Greedy, PersonalityType::Cooperative) => {
+                self.healthpoints += GREEDCOOP_HEALTH_GAIN;
+                Log::info(format!(
+                    "Bugster gained {}, Current Hp {}",
+                    GREEDCOOP_HEALTH_GAIN, self.healthpoints
+                ));
+            }
+            (PersonalityType::Cooperative, PersonalityType::Greedy) => {
+                self.healthpoints += COOPGREED_HEALTH_GAIN;
+                Log::info(format!(
+                    "Bugster gained {}, Current Hp {}",
+                    COOPGREED_HEALTH_GAIN, self.healthpoints
+                ));
+            }
+            (PersonalityType::Cooperative, PersonalityType::Cooperative) => {
+                self.healthpoints += COOPCOOP_HEALTH_GAIN;
+                Log::info(format!(
+                    "Bugster gained {}, Current Hp {}",
+                    COOPCOOP_HEALTH_GAIN, self.healthpoints
+                ));
+            }
         }
     }
 
@@ -157,43 +267,50 @@ impl ScriptTrait for Bugsters {
             &mut context.scene.graph,
             context.resource_manager.clone(),
         );
-        //link the sprite as a child of the bugster node
-        //for some reason link_nodes is not accessible here, so using link_nodes_keep_global_transform instead
-        context
-            .scene
-            .graph
-            .link_nodes_keep_global_transform(child_handle, parent_handle);
 
-        //set the sprite position to (0,0,0) relative to the bugster node
-        if let Some(rectangle) = context.scene.graph[child_handle].cast_mut::<Rectangle>() {
-            rectangle
-                .local_transform_mut()
-                .set_position(Vector3::new(0.0, 0.0, 0.0));
-        }
+        //link the sprite as a child of the bugster node
+        context.scene.graph.link_nodes(child_handle, parent_handle);
     }
 
     fn on_update(&mut self, context: &mut ScriptContext) {
-        self.time_since_last_change += context.dt;
+        //check for collision
+        if self.collision_time_since_last_change >= self.collision_change_interval {
+            self.entity_contact(context);
+            self.collision_time_since_last_change = 0.0;
 
-        self.entity_contact(context);
-
-        if let Some(rigid_body) = context.scene.graph[context.handle].cast_mut::<RigidBody>() {
-            //when the time since last change exceeds the change interval, change direction and apply impulse
-            if self.time_since_last_change >= self.change_interval {
-                //randomly generate new x and y speeds within the speed limit
-                self.x_speed = rand::random_range(-self.speed..=self.speed);
-                self.y_speed = rand::random_range(-1.0..=1.0) * (self.speed - self.x_speed.abs());
-                //reset the timer
-                self.time_since_last_change = 0.0;
-                //set a new random change interval
-                self.change_interval = rand::random_range(MIN_WAIT_TIME..=MAX_WAIT_TIME);
-                //log the new speeds
-                Log::info(format!("Bugster X_speed: {}", self.x_speed).as_str());
-                Log::info(format!("Bugster Y_speed: {}", self.y_speed).as_str());
-
-                //apply the new speeds as an impulse to the rigid body
-                rigid_body.apply_impulse(Vector2::new(self.x_speed, self.y_speed));
+            //if hp drops to 0, remove this node
+            if self.healthpoints <= 0 {
+                context.scene.graph.remove_node(self.rigid_body_handle);
             }
+        }
+
+        let Some(rigid_body) = context
+            .scene
+            .graph
+            .try_get_mut_of_type::<RigidBody>(self.rigid_body_handle)
+        else {
+            Log::info("Not a Rigid Body!");
+            return;
+        };
+
+        self.move_time_since_last_change += context.dt;
+        self.collision_time_since_last_change += context.dt;
+
+        //when the time since last change exceeds the change interval, change direction and apply impulse
+        if self.move_time_since_last_change >= self.move_change_interval {
+            //randomly generate new x and y speeds within the speed limit
+            self.x_speed = rand::random_range(-self.speed..=self.speed);
+            self.y_speed = rand::random_range(-1.0..=1.0) * (self.speed - self.x_speed.abs());
+            //reset the timer
+            self.move_time_since_last_change = 0.0;
+            //set a new random change interval
+            self.move_change_interval = rand::random_range(MIN_WAIT_TIME..=MAX_WAIT_TIME);
+
+            //apply the new speeds as an impulse to the rigid body
+            rigid_body.apply_impulse(Vector2::new(self.x_speed, self.y_speed));
+            //log the new speeds
+            //Log::info(format!("Bugster X_speed: {}", self.x_speed));
+            //Log::info(format!("Bugster Y_speed: {}", self.y_speed));
         }
     }
 }
