@@ -1,32 +1,21 @@
 use fyrox::{
-    asset::{manager::ResourceManager, untyped::ResourceKind},
     core::{
-        algebra::{Vector2, Vector3},
-        log::Log,
-        pool::Handle,
-        reflect::prelude::*,
-        type_traits::prelude::*,
-        uuid::{self},
+        algebra::Vector2, log::Log, pool::Handle, reflect::prelude::*, type_traits::prelude::*,
         visitor::prelude::*,
     },
     graph::{BaseSceneGraph, SceneGraph},
-    gui::texture::Texture,
-    material::{Material, MaterialResource},
+    gui::{message::MessageDirection, text::TextMessage, widget::WidgetMessage},
     scene::{
-        base::BaseBuilder,
-        dim2::{collider::Collider, rectangle::RectangleBuilder, rigidbody::RigidBody},
-        graph::Graph,
+        dim2::{collider::Collider, rigidbody::RigidBody},
         node::Node,
-        transform::TransformBuilder,
     },
     script::{ScriptContext, ScriptTrait},
 };
 use rand::random_range;
+use std::cmp;
 
 use crate::Game;
 
-const COOPERATIVE_SPRITE_PATH: &str = "data/sprites/bugster_cooperative.png";
-const GREEDY_SPRITE_PATH: &str = "data/sprites/bugster_greedy.png";
 const MAX_SPEED: f32 = 15.0;
 const MAX_WAIT_TIME: f32 = 5.0;
 const MIN_WAIT_TIME: f32 = 3.0;
@@ -87,7 +76,8 @@ impl Bugsters {
             move_time_since_last_change: 2.0,
             move_change_interval: 1.0,
             collision_time_since_last_change: 1.0,
-            collision_change_interval: 0.1,
+            collision_change_interval: 0.5,
+
             rigid_body_handle: rigid_body,
             collision_handle: collision,
             detector_handle: detector,
@@ -106,7 +96,7 @@ impl Bugsters {
             .intersects(&graph.physics2d)
             .filter(|i| i.has_any_active_contact)
             .collect();
-
+        Log::info(format!("{:?}, {:?}", self.detector_handle, intersections));
         for intersection in intersections {
             //get the collider that this collider interesected
             let collided = if self.detector_handle == intersection.collider1 {
@@ -132,13 +122,39 @@ impl Bugsters {
                 .try_get_script_of_mut::<Bugsters>(parent_rigid)
             {
                 let health_change = self.health_calculation(&script.personality);
+                let actual_health_change = cmp::max(health_change, self.healthpoints * -1); //calcuates the actual amount lost
                 self.healthpoints += health_change;
+
+                Log::info(format!(
+                    "{:?}, {:?}, {} {}",
+                    self.personality, &script.personality, health_change, actual_health_change
+                ));
 
                 //apply the change to the overall game counters
                 let game = context.plugins.get_mut::<Game>();
                 match self.personality {
-                    PersonalityType::Greedy => game.change_greed_hp(health_change),
-                    PersonalityType::Cooperative => game.change_coop_hp(health_change),
+                    PersonalityType::Greedy => {
+                        game.change_greed_hp(actual_health_change);
+                        context
+                            .user_interfaces
+                            .first()
+                            .send_message(TextMessage::text(
+                                game.greed_counter,
+                                MessageDirection::ToWidget,
+                                format!("Greed Total: {}", game.greed_hp).to_owned(),
+                            ));
+                    }
+                    PersonalityType::Cooperative => {
+                        game.change_coop_hp(actual_health_change);
+                        context
+                            .user_interfaces
+                            .first()
+                            .send_message(TextMessage::text(
+                                game.coop_counter,
+                                MessageDirection::ToWidget,
+                                format!("Coop Total: {}", game.coop_hp).to_owned(),
+                            ));
+                    }
                 }
             } else {
                 Log::err("NO BUGSTER SCRIPT FOUND");
@@ -171,7 +187,7 @@ impl Bugsters {
                 return;
             };
             //use the direction to apply a knockback force that knocks the two nodes away from eachother
-            rigid_body.apply_impulse(Vector2::new(direction.x * -7.0, direction.y * -7.0));
+            rigid_body.apply_impulse(Vector2::new(direction.x * -6.0, direction.y * -6.0));
         }
     }
 
@@ -184,73 +200,16 @@ impl Bugsters {
             (PersonalityType::Cooperative, PersonalityType::Cooperative) => COOPCOOP_HEALTH_GAIN,
         }
     }
-
-    //sets the texture of the bugster based on its personality type
-    fn set_texture(
-        &mut self,
-        personality: PersonalityType,
-        graph: &mut Graph,
-        resource_manager: ResourceManager,
-    ) -> Handle<Node> {
-        let mut material = Material::standard_2d();
-        match personality {
-            PersonalityType::Cooperative => {
-                material.bind(
-                    "diffuseTexture",
-                    Some(resource_manager.request::<Texture>(COOPERATIVE_SPRITE_PATH)),
-                );
-                Log::info("Set sprite to cooperative texture");
-            }
-            PersonalityType::Greedy => {
-                material.bind(
-                    "diffuseTexture",
-                    Some(resource_manager.request::<Texture>(GREEDY_SPRITE_PATH)),
-                );
-                Log::info("Set sprite to greedy texture");
-            }
-        }
-
-        let material_resource = MaterialResource::new_ok(
-            uuid::Uuid::new_v4(), // Generate a random UUID for the resource
-            ResourceKind::Embedded,
-            material,
-        );
-
-        RectangleBuilder::new(
-            BaseBuilder::new().with_local_transform(
-                TransformBuilder::new()
-                    // Size of the rectangle is defined only by scale.
-                    .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
-                    .with_local_position(Vector3::new(0.0, 0.0, 1.0))
-                    .build(),
-            ),
-        )
-        .with_material(material_resource)
-        .build(graph)
-    }
 }
 
 impl ScriptTrait for Bugsters {
     fn on_init(&mut self, _context: &mut ScriptContext) {}
 
-    fn on_start(&mut self, context: &mut ScriptContext) {
-        //set the texture on start
-        let parent_handle = context.handle;
-        let child_handle = self.set_texture(
-            self.personality.clone(),
-            &mut context.scene.graph,
-            context.resource_manager.clone(),
-        );
-
-        //link the sprite as a child of the bugster node
-        context.scene.graph.link_nodes(child_handle, parent_handle);
-    }
-
     fn on_update(&mut self, context: &mut ScriptContext) {
         //check for collision
         if self.collision_time_since_last_change >= self.collision_change_interval {
-            self.entity_contact(context);
             self.collision_time_since_last_change = 0.0;
+            self.entity_contact(context);
 
             //if hp drops to 0, remove this node
             if self.healthpoints <= 0 {
@@ -282,9 +241,6 @@ impl ScriptTrait for Bugsters {
 
             //apply the new speeds as an impulse to the rigid body
             rigid_body.apply_impulse(Vector2::new(self.x_speed, self.y_speed));
-            //log the new speeds
-            //Log::info(format!("Bugster X_speed: {}", self.x_speed));
-            //Log::info(format!("Bugster Y_speed: {}", self.y_speed));
         }
     }
 }

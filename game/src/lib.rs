@@ -2,30 +2,48 @@
 #[allow(unused_imports)]
 use fyrox::graph::prelude::*;
 use fyrox::{
+    asset::{manager::ResourceManager, untyped::ResourceKind},
     core::{
         algebra::{Vector2, Vector3},
+        color::Color,
         log::{self, Log},
         pool::Handle,
         reflect::prelude::*,
+        uuid,
         visitor::prelude::*,
     },
+    core::{reflect::prelude::*, visitor::prelude::*},
     engine::GraphicsContext,
     graph::SceneGraph,
+    graphics::gpu_texture::PixelKind,
     gui::{
-        button::ButtonMessage, message::MessageDirection, numeric::NumericUpDown,
-        widget::WidgetMessage, UiNode, UserInterface,
+        brush::Brush,
+        button::ButtonMessage,
+        message::MessageDirection,
+        numeric::NumericUpDown,
+        text::{TextBuilder, TextMessage},
+        texture::{Texture, TextureResource, TextureResourceExtension},
+        widget::{WidgetBuilder, WidgetMessage},
+        HorizontalAlignment, UiContainer, UiNode, UserInterface, VerticalAlignment,
     },
+    material::{Material, MaterialResource},
     plugin::{Plugin, PluginContext, PluginRegistrationContext},
+    renderer::ui_renderer::UiRenderInfo,
     scene::{
         base::BaseBuilder,
         collider::{BitMask, InteractionGroups},
         dim2::{
             collider::{ColliderBuilder, ColliderShape},
+            rectangle::RectangleBuilder,
             rigidbody::RigidBodyBuilder,
         },
+        graph::Graph,
+        node::Node,
         rigidbody::RigidBodyType,
+        transform::TransformBuilder,
         Scene,
     },
+    utils,
     window::Fullscreen,
 };
 
@@ -41,12 +59,16 @@ pub mod bugster;
 
 const MAX_X: f32 = 8.0;
 const MAX_Y: f32 = 3.5;
+const COOPERATIVE_SPRITE_PATH: &str = "data/sprites/bugster_cooperative.png";
+const GREEDY_SPRITE_PATH: &str = "data/sprites/bugster_greedy.png";
 
 #[derive(Default, Visit, Reflect, Debug)]
 #[reflect(non_cloneable)]
 pub struct Game {
     pub coop_hp: i64,
     pub greed_hp: i64,
+    pub coop_counter: Handle<UiNode>,
+    pub greed_counter: Handle<UiNode>,
     scene: Handle<Scene>,
     start: Handle<UiNode>,
     exit: Handle<UiNode>,
@@ -65,7 +87,16 @@ impl Game {
                 random_range(MAX_X * -1.0..=MAX_X),
                 random_range(MAX_Y * -1.0..=MAX_Y),
             );
-            self.coop_hp += 10;
+            //add the health of the bugster to the counter
+            self.change_coop_hp(10);
+            context
+                .user_interfaces
+                .first()
+                .send_message(TextMessage::text(
+                    self.coop_counter,
+                    MessageDirection::ToWidget,
+                    format!("Coop Total: {}", self.coop_hp).to_owned(),
+                ));
         }
         for _ in 0..greed_count {
             add_bugster(
@@ -75,7 +106,15 @@ impl Game {
                 random_range(MAX_X * -1.0..=MAX_X),
                 random_range(MAX_Y * -1.0..=MAX_Y),
             );
-            self.greed_hp += 10;
+            self.change_greed_hp(10);
+            context
+                .user_interfaces
+                .first()
+                .send_message(TextMessage::text(
+                    self.greed_counter,
+                    MessageDirection::ToWidget,
+                    format!("Greed Total: {}", self.greed_hp).to_owned(),
+                ));
         }
     }
 
@@ -125,6 +164,14 @@ impl Plugin for Game {
                     .user_interfaces
                     .first()
                     .find_handle_by_name_from_root("Greed");
+                game.coop_counter = ctx
+                    .user_interfaces
+                    .first()
+                    .find_handle_by_name_from_root("CoopCount");
+                game.greed_counter = ctx
+                    .user_interfaces
+                    .first()
+                    .find_handle_by_name_from_root("GreedyCount");
             },
         );
     }
@@ -220,23 +267,28 @@ fn add_bugster(
             },
         ))
         .with_collision_groups(InteractionGroups::new(
-            BitMask(0b0000_0000_0000_0000_0000_0000_0000_0010),
+            BitMask(0b0000_0000_0000_0000_0000_0000_0000_0001),
             BitMask(0b0000_0000_0000_0000_0000_0000_0000_0010),
         ))
         .with_sensor(true)
         .build(graph);
 
+    let sprite = get_texture(&personality, graph, context.resource_manager);
+
     //create our rigid body and attach our colliders
-    let node_handle =
-        RigidBodyBuilder::new(BaseBuilder::new().with_children(&[collision_body, detector_body]))
-            .with_mass(1.0)
-            .with_lin_vel(Vector2::new(0.0, 0.0))
-            .with_ang_damping(0.0)
-            .with_gravity_scale(0.0)
-            .with_rotation_locked(true)
-            .with_can_sleep(false)
-            .with_body_type(RigidBodyType::Dynamic)
-            .build(graph);
+    let node_handle = RigidBodyBuilder::new(BaseBuilder::new().with_children(&[
+        collision_body,
+        detector_body,
+        sprite,
+    ]))
+    .with_mass(1.0)
+    .with_lin_vel(Vector2::new(0.0, 0.0))
+    .with_ang_damping(0.0)
+    .with_gravity_scale(0.0)
+    .with_rotation_locked(true)
+    .with_can_sleep(false)
+    .with_body_type(RigidBodyType::Dynamic)
+    .build(graph);
 
     //then attach the script to it
     graph[node_handle].add_script(Bugsters::new(
@@ -252,3 +304,103 @@ fn add_bugster(
         .local_transform_mut()
         .set_position(Vector3::new(x, y, 0.0));
 }
+
+//gets the texture of the bugster based on its personality type
+fn get_texture(
+    personality: &PersonalityType,
+    graph: &mut Graph,
+    resource_manager: &ResourceManager,
+) -> Handle<Node> {
+    let mut material = Material::standard_2d();
+    match personality {
+        PersonalityType::Cooperative => {
+            material.bind(
+                "diffuseTexture",
+                Some(resource_manager.request::<Texture>(COOPERATIVE_SPRITE_PATH)),
+            );
+            Log::info("Set sprite to cooperative texture");
+        }
+        PersonalityType::Greedy => {
+            material.bind(
+                "diffuseTexture",
+                Some(resource_manager.request::<Texture>(GREEDY_SPRITE_PATH)),
+            );
+            Log::info("Set sprite to greedy texture");
+        }
+    }
+
+    let material_resource = MaterialResource::new_ok(
+        uuid::Uuid::new_v4(), // Generate a random UUID for the resource
+        ResourceKind::Embedded,
+        material,
+    );
+
+    RectangleBuilder::new(
+        BaseBuilder::new().with_local_transform(
+            TransformBuilder::new()
+                // Size of the rectangle is defined only by scale.
+                .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
+                .with_local_position(Vector3::new(0.0, 0.0, 1.0))
+                .build(),
+        ),
+    )
+    .with_material(material_resource)
+    .build(graph)
+}
+
+/*
+//generates the hp indicator for our bugster
+fn get_hp_box(
+    user_interfaces: &mut UiContainer,
+    graphics_context: &mut GraphicsContext,
+    graph: &mut Graph,
+    resource_manager: &ResourceManager,
+) -> Handle<Node> {
+    let width = 10;
+    let height = 10;
+    let render_target = TextureResource::new_render_target(width, height);
+    let screen_size = Vector2::new(width as f32, height as f32);
+    let mut ui = UserInterface::new(screen_size);
+
+    TextBuilder::new(WidgetBuilder::new().with_foreground(Brush::Solid(Color::RED).into()))
+        .with_horizontal_text_alignment(HorizontalAlignment::Center)
+        .with_vertical_text_alignment(VerticalAlignment::Center)
+        .with_text("tesdsasdadadadt")
+        .with_shadow(true)
+        .with_font_size(50.0.into())
+        .build(&mut ui.build_ctx());
+
+    if let GraphicsContext::Initialized(ref mut graphics_context) = graphics_context {
+        let render_info = UiRenderInfo {
+            ui: &ui,
+            render_target: Some(render_target.clone()),
+            clear_color: Color::BLACK,
+            resource_manager: resource_manager,
+        };
+        Log::verify(graphics_context.renderer.render_ui(render_info));
+    }
+
+    let mut material = Material::standard_2d();
+    material.bind("diffuseTexture", Some(render_target));
+
+    let material_resource = MaterialResource::new_ok(
+        uuid::Uuid::new_v4(), // Generate a random UUID for the resource
+        ResourceKind::Embedded,
+        material,
+    );
+
+    user_interfaces.add(ui);
+
+    RectangleBuilder::new(
+        BaseBuilder::new().with_local_transform(
+            TransformBuilder::new()
+                // Size of the rectangle is defined only by scale.
+                .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
+                .with_local_position(Vector3::new(0.0, 0.0, 0.0))
+                .build(),
+        ),
+    )
+    .with_material(material_resource)
+    .build(graph)
+}
+*/
