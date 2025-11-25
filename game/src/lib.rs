@@ -5,30 +5,20 @@ use fyrox::{
     asset::{manager::ResourceManager, untyped::ResourceKind},
     core::{
         algebra::{Vector2, Vector3},
-        color::Color,
-        log::{self, Log},
+        log::Log,
         pool::Handle,
         reflect::prelude::*,
         uuid,
         visitor::prelude::*,
     },
-    core::{reflect::prelude::*, visitor::prelude::*},
     engine::GraphicsContext,
     graph::SceneGraph,
-    graphics::gpu_texture::PixelKind,
     gui::{
-        brush::Brush,
-        button::ButtonMessage,
-        message::MessageDirection,
-        numeric::NumericUpDown,
-        text::{TextBuilder, TextMessage},
-        texture::{Texture, TextureResource, TextureResourceExtension},
-        widget::{WidgetBuilder, WidgetMessage},
-        HorizontalAlignment, UiContainer, UiNode, UserInterface, VerticalAlignment,
+        button::ButtonMessage, message::MessageDirection, numeric::NumericUpDown,
+        text::TextMessage, texture::Texture, widget::WidgetMessage, UiNode, UserInterface,
     },
     material::{Material, MaterialResource},
     plugin::{Plugin, PluginContext, PluginRegistrationContext},
-    renderer::ui_renderer::UiRenderInfo,
     scene::{
         base::BaseBuilder,
         collider::{BitMask, InteractionGroups},
@@ -43,7 +33,6 @@ use fyrox::{
         transform::TransformBuilder,
         Scene,
     },
-    utils,
     window::Fullscreen,
 };
 
@@ -347,60 +336,3 @@ fn get_texture(
     .with_material(material_resource)
     .build(graph)
 }
-
-/*
-//generates the hp indicator for our bugster
-fn get_hp_box(
-    user_interfaces: &mut UiContainer,
-    graphics_context: &mut GraphicsContext,
-    graph: &mut Graph,
-    resource_manager: &ResourceManager,
-) -> Handle<Node> {
-    let width = 10;
-    let height = 10;
-    let render_target = TextureResource::new_render_target(width, height);
-    let screen_size = Vector2::new(width as f32, height as f32);
-    let mut ui = UserInterface::new(screen_size);
-
-    TextBuilder::new(WidgetBuilder::new().with_foreground(Brush::Solid(Color::RED).into()))
-        .with_horizontal_text_alignment(HorizontalAlignment::Center)
-        .with_vertical_text_alignment(VerticalAlignment::Center)
-        .with_text("tesdsasdadadadt")
-        .with_shadow(true)
-        .with_font_size(50.0.into())
-        .build(&mut ui.build_ctx());
-
-    if let GraphicsContext::Initialized(ref mut graphics_context) = graphics_context {
-        let render_info = UiRenderInfo {
-            ui: &ui,
-            render_target: Some(render_target.clone()),
-            clear_color: Color::BLACK,
-            resource_manager: resource_manager,
-        };
-        Log::verify(graphics_context.renderer.render_ui(render_info));
-    }
-
-    let mut material = Material::standard_2d();
-    material.bind("diffuseTexture", Some(render_target));
-
-    let material_resource = MaterialResource::new_ok(
-        uuid::Uuid::new_v4(), // Generate a random UUID for the resource
-        ResourceKind::Embedded,
-        material,
-    );
-
-    user_interfaces.add(ui);
-
-    RectangleBuilder::new(
-        BaseBuilder::new().with_local_transform(
-            TransformBuilder::new()
-                // Size of the rectangle is defined only by scale.
-                .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
-                .with_local_position(Vector3::new(0.0, 0.0, 0.0))
-                .build(),
-        ),
-    )
-    .with_material(material_resource)
-    .build(graph)
-}
-*/

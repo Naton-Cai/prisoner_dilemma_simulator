@@ -24,7 +24,7 @@ const MIN_WAIT_TIME: f32 = 3.0;
 const GREEDGREED_HEALTH_GAIN: i64 = -1;
 const GREEDCOOP_HEALTH_GAIN: i64 = 3;
 const COOPGREED_HEALTH_GAIN: i64 = -2;
-const COOPCOOP_HEALTH_GAIN: i64 = 1;
+const COOPCOOP_HEALTH_GAIN: i64 = 2;
 
 //our enum that determines the personality type of our bugster
 #[derive(Visit, Reflect, Debug, Clone)]
@@ -96,7 +96,6 @@ impl Bugsters {
             .intersects(&graph.physics2d)
             .filter(|i| i.has_any_active_contact)
             .collect();
-        Log::info(format!("{:?}, {:?}", self.detector_handle, intersections));
         for intersection in intersections {
             //get the collider that this collider interesected
             let collided = if self.detector_handle == intersection.collider1 {
@@ -122,13 +121,8 @@ impl Bugsters {
                 .try_get_script_of_mut::<Bugsters>(parent_rigid)
             {
                 let health_change = self.health_calculation(&script.personality);
-                let actual_health_change = cmp::max(health_change, self.healthpoints * -1); //calcuates the actual amount lost
+                let actual_health_change = cmp::max(health_change, self.healthpoints * -1); //calcuates the actual amount lost, accounting for health dropping to 0
                 self.healthpoints += health_change;
-
-                Log::info(format!(
-                    "{:?}, {:?}, {} {}",
-                    self.personality, &script.personality, health_change, actual_health_change
-                ));
 
                 //apply the change to the overall game counters
                 let game = context.plugins.get_mut::<Game>();
@@ -155,6 +149,11 @@ impl Bugsters {
                                 format!("Coop Total: {}", game.coop_hp).to_owned(),
                             ));
                     }
+                }
+
+                //if hp drops to 0, remove this node
+                if self.healthpoints <= 0 {
+                    context.scene.graph.remove_node(self.rigid_body_handle);
                 }
             } else {
                 Log::err("NO BUGSTER SCRIPT FOUND");
@@ -210,11 +209,6 @@ impl ScriptTrait for Bugsters {
         if self.collision_time_since_last_change >= self.collision_change_interval {
             self.collision_time_since_last_change = 0.0;
             self.entity_contact(context);
-
-            //if hp drops to 0, remove this node
-            if self.healthpoints <= 0 {
-                context.scene.graph.remove_node(self.rigid_body_handle);
-            }
         }
 
         let Some(rigid_body) = context
