@@ -1,12 +1,19 @@
 use fyrox::{
     core::{
-        algebra::Vector2, log::Log, pool::Handle, reflect::prelude::*, type_traits::prelude::*,
+        algebra::{Vector2, Vector3},
+        log::Log,
+        pool::Handle,
+        reflect::prelude::*,
+        type_traits::prelude::*,
         visitor::prelude::*,
     },
     graph::{BaseSceneGraph, SceneGraph},
-    gui::{message::MessageDirection, text::TextMessage, widget::WidgetMessage},
+    gui::{message::MessageDirection, text::TextMessage},
     scene::{
-        dim2::{collider::Collider, rigidbody::RigidBody},
+        dim2::{
+            collider::{Collider, ColliderShape},
+            rigidbody::RigidBody,
+        },
         node::Node,
     },
     script::{ScriptContext, ScriptTrait},
@@ -188,6 +195,61 @@ impl Bugsters {
             //use the direction to apply a knockback force that knocks the two nodes away from eachother
             rigid_body.apply_impulse(Vector2::new(direction.x * -6.0, direction.y * -6.0));
         }
+
+        self.change_size(context);
+    }
+
+    //changes the size of the bugster based on the health
+    pub fn change_size(&mut self, context: &mut ScriptContext) {
+        //calcuates the size change based on a scaling equation
+        let change_scale: f32 = if self.healthpoints >= 10 {
+            1.0 / 10.0 * (self.healthpoints as f32 - 10.0).sqrt() + 1.0
+        } else {
+            -1.0 / 10.0 * (-self.healthpoints as f32 + 10.0).sqrt() + 1.0
+        };
+
+        if let Some(rigid_body) = context
+            .scene
+            .graph
+            .try_get_mut_of_type::<RigidBody>(self.rigid_body_handle)
+        {
+            let transformations = rigid_body.local_transform_mut();
+
+            transformations.set_scale(Vector3::new(change_scale, change_scale, 1.0));
+        } else {
+            Log::info("Not a Rigid Body!");
+            return;
+        };
+
+        //Fyrox requires you to provide the colliders with a new shape to change size despite the parent rigidbody changing it local scale
+        if let Some(collider) = context
+            .scene
+            .graph
+            .try_get_mut_of_type::<Collider>(self.collision_handle)
+        {
+            Log::info(format!("{:?}", collider.shape()));
+            collider.set_shape(ColliderShape::cuboid(
+                change_scale / 2.0,
+                change_scale / 2.0,
+            ));
+        } else {
+            Log::info("Not a Collider");
+            return;
+        };
+
+        if let Some(collider) = context
+            .scene
+            .graph
+            .try_get_mut_of_type::<Collider>(self.detector_handle)
+        {
+            collider.set_shape(ColliderShape::cuboid(
+                change_scale / 2.0,
+                change_scale / 2.0,
+            ));
+        } else {
+            Log::info("Not a Collider");
+            return;
+        };
     }
 
     //calculates the health changes when contacting another bugster

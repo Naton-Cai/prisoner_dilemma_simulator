@@ -19,6 +19,7 @@ use fyrox::{
     },
     material::{Material, MaterialResource},
     plugin::{Plugin, PluginContext, PluginRegistrationContext},
+    renderer::QualitySettings,
     scene::{
         base::BaseBuilder,
         collider::{BitMask, InteractionGroups},
@@ -167,7 +168,11 @@ impl Plugin for Game {
 
     fn on_graphics_context_initialized(&mut self, context: PluginContext) {
         let graphics_context = context.graphics_context.as_initialized_mut();
+        let mut settings = QualitySettings::low();
 
+        settings.use_ssao = false;
+        settings.fxaa = false;
+        Log::verify(graphics_context.renderer.set_quality_settings(&settings));
         graphics_context.window.set_title("Prisoner Dilemma");
 
         if let GraphicsContext::Initialized(ref graphics_context) = context.graphics_context {
