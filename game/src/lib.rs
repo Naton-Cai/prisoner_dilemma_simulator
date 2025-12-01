@@ -49,6 +49,11 @@ pub mod bugster;
 
 const MAX_X: f32 = 8.0;
 const MAX_Y: f32 = 3.5;
+const BASE_HEALTH: i64 = 10;
+const BASE_SIZE: f32 = 1.0;
+const SCALE_FACTOR: f32 = 0.1;
+const DETECTOR_MARGIN: f32 = 0.5;
+
 const COOPERATIVE_SPRITE_PATH: &str = "data/sprites/bugster_cooperative.png";
 const GREEDY_SPRITE_PATH: &str = "data/sprites/bugster_greedy.png";
 
@@ -78,7 +83,7 @@ impl Game {
                 random_range(MAX_Y * -1.0..=MAX_Y),
             );
             //add the health of the bugster to the counter
-            self.change_coop_hp(10);
+            self.change_coop_hp(BASE_HEALTH);
             context
                 .user_interfaces
                 .first()
@@ -96,7 +101,7 @@ impl Game {
                 random_range(MAX_X * -1.0..=MAX_X),
                 random_range(MAX_Y * -1.0..=MAX_Y),
             );
-            self.change_greed_hp(10);
+            self.change_greed_hp(BASE_HEALTH);
             context
                 .user_interfaces
                 .first()
@@ -236,7 +241,7 @@ impl Plugin for Game {
     }
 }
 
-//creates the bugster
+//creates the bugster at a given position
 fn add_bugster(
     context: &mut PluginContext,
     scene: Handle<Scene>,
@@ -250,14 +255,18 @@ fn add_bugster(
     let collision_body = ColliderBuilder::new(BaseBuilder::new())
         .with_shape(ColliderShape::Cuboid(
             fyrox::scene::dim2::collider::CuboidShape {
-                half_extents: Vector2::new(0.5, 0.5),
+                half_extents: Vector2::new(BASE_SIZE / 2.0, BASE_SIZE / 2.0),
             },
         ))
         .build(graph);
+    //the detector should be just slightly bigger than the actual collider
     let detector_body = ColliderBuilder::new(BaseBuilder::new())
         .with_shape(ColliderShape::Cuboid(
             fyrox::scene::dim2::collider::CuboidShape {
-                half_extents: Vector2::new(0.55, 0.55),
+                half_extents: Vector2::new(
+                    BASE_SIZE / 2.0 + DETECTOR_MARGIN,
+                    BASE_SIZE / 2.0 + DETECTOR_MARGIN,
+                ),
             },
         ))
         .with_collision_groups(InteractionGroups::new(
@@ -285,18 +294,18 @@ fn add_bugster(
     .build(graph);
 
     //then attach the script to it
-    graph[node_handle].add_script(Bugsters::new(
-        10,
-        personality,
-        node_handle,
-        collision_body,
-        detector_body,
-    ));
 
-    //change the nodes position
-    graph[node_handle]
-        .local_transform_mut()
-        .set_position(Vector3::new(x, y, 0.0));
+    if let Some(node) = graph.try_get_mut(node_handle) {
+        node.add_script(Bugsters::new(
+            BASE_HEALTH,
+            personality,
+            node_handle,
+            collision_body,
+            detector_body,
+        ));
+        node.local_transform_mut()
+            .set_position(Vector3::new(x, y, 0.0));
+    }
 }
 
 //gets the texture of the bugster based on its personality type

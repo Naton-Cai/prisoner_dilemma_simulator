@@ -26,6 +26,11 @@ use crate::Game;
 const MAX_SPEED: f32 = 15.0;
 const MAX_WAIT_TIME: f32 = 5.0;
 const MIN_WAIT_TIME: f32 = 3.0;
+const BASE_SIZE: f32 = 1.0;
+const DETECTOR_MARGIN: f32 = 0.5;
+const BASE_HEALTH: i64 = 10;
+const SCALE_FACTOR: f32 = 0.1;
+const BOUNCE_FORCE: f32 = -6.0;
 
 //our values to calcuate health gain
 const GREEDGREED_HEALTH_GAIN: i64 = -1;
@@ -99,10 +104,12 @@ impl Bugsters {
             return;
         };
 
+        //intersections is a vector of instersecting collider pairs
         let intersections: Vec<_> = detector
             .intersects(&graph.physics2d)
             .filter(|i| i.has_any_active_contact)
             .collect();
+
         for intersection in intersections {
             //get the collider that this collider interesected
             let collided = if self.detector_handle == intersection.collider1 {
@@ -193,19 +200,24 @@ impl Bugsters {
                 return;
             };
             //use the direction to apply a knockback force that knocks the two nodes away from eachother
-            rigid_body.apply_impulse(Vector2::new(direction.x * -6.0, direction.y * -6.0));
+            rigid_body.apply_impulse(Vector2::new(
+                direction.x * BOUNCE_FORCE,
+                direction.y * BOUNCE_FORCE,
+            ));
         }
 
+        //recalcualte the size based on the current health
         self.change_size(context);
     }
 
     //changes the size of the bugster based on the health
     pub fn change_size(&mut self, context: &mut ScriptContext) {
         //calcuates the size change based on a scaling equation
-        let change_scale: f32 = if self.healthpoints >= 10 {
-            1.0 / 10.0 * (self.healthpoints as f32 - 10.0).sqrt() + 1.0
+        let change_scale: f32 = if self.healthpoints >= BASE_HEALTH {
+            SCALE_FACTOR * (self.healthpoints as f32 - BASE_HEALTH as f32).sqrt() + BASE_SIZE
         } else {
-            -1.0 / 10.0 * (-self.healthpoints as f32 + 10.0).sqrt() + 1.0
+            -1.0 * SCALE_FACTOR * (-self.healthpoints as f32 + BASE_HEALTH as f32).sqrt()
+                + BASE_SIZE
         };
 
         if let Some(rigid_body) = context
@@ -213,21 +225,21 @@ impl Bugsters {
             .graph
             .try_get_mut_of_type::<RigidBody>(self.rigid_body_handle)
         {
-            let transformations = rigid_body.local_transform_mut();
-
-            transformations.set_scale(Vector3::new(change_scale, change_scale, 1.0));
+            rigid_body.local_transform_mut().set_scale(Vector3::new(
+                change_scale,
+                change_scale,
+                1.0,
+            ));
         } else {
-            Log::info("Not a Rigid Body!");
-            return;
+            Log::info("Not a Rigid Body!")
         };
 
-        //Fyrox requires you to provide the colliders with a new shape to change size despite the parent rigidbody changing it local scale
+        //Fyrox requires you to provide the colliders with a new shape to change size despite the parent rigidbody changing
         if let Some(collider) = context
             .scene
             .graph
             .try_get_mut_of_type::<Collider>(self.collision_handle)
         {
-            Log::info(format!("{:?}", collider.shape()));
             collider.set_shape(ColliderShape::cuboid(
                 change_scale / 2.0,
                 change_scale / 2.0,
@@ -237,14 +249,15 @@ impl Bugsters {
             return;
         };
 
+        //the dectector should be slightly larger than the actual colider so apply a margine
         if let Some(collider) = context
             .scene
             .graph
             .try_get_mut_of_type::<Collider>(self.detector_handle)
         {
             collider.set_shape(ColliderShape::cuboid(
-                change_scale / 2.0,
-                change_scale / 2.0,
+                change_scale / 2.0 + DETECTOR_MARGIN,
+                change_scale / 2.0 + DETECTOR_MARGIN,
             ));
         } else {
             Log::info("Not a Collider");

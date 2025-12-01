@@ -1,11 +1,11 @@
 {
-    "143d7b18-9817-439c-b883-2e28fd5d4c09": "data/sprites/bugster_cooperative.png",
     "2e89d165-c1e6-4edf-85d5-20d779c204de": "data/Sprites/bugster_cooperative.png",
     "438f36bb-f766-4ed7-a491-d5540158ed2c": "data/UI/start.ui",
+    "484a51bd-05ba-4912-ae57-3e3dfa073f3d": "data/sprites/bugster_greedy.png",
     "48b42e9a-4d52-4160-aa32-054ae30d5756": "data/scene.rgs",
     "53557acc-51c5-422a-b878-c44248521180": "data/Scenes/bugster.rgs",
     "5912a873-0cba-404a-9bee-929dc7db776c": "data/Sprites/bugster1.png",
-    "6239e4cb-3067-432d-b582-4ee298c39434": "data/sprites/bugster_greedy.png",
+    "93424b96-8a16-4b23-8630-8e06dcf75a94": "data/sprites/bugster_cooperative.png",
     "9f32e2e7-0f6c-4f38-96e6-a536881b748c": "data/Sprites/bugster_greedy.png",
     "a463c655-ce6d-4628-a58f-00019b9daae2": "data/Scenes/scene.rgs",
 }
