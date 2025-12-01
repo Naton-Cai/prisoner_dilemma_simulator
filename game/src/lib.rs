@@ -50,9 +50,7 @@ pub mod bugster;
 const MAX_X: f32 = 8.0;
 const MAX_Y: f32 = 3.5;
 const BASE_HEALTH: i64 = 10;
-const BASE_SIZE: f32 = 1.0;
-const SCALE_FACTOR: f32 = 0.1;
-const DETECTOR_MARGIN: f32 = 0.5;
+const BASE_SIZE: f32 = 0.5;
 
 const COOPERATIVE_SPRITE_PATH: &str = "data/sprites/bugster_cooperative.png";
 const GREEDY_SPRITE_PATH: &str = "data/sprites/bugster_greedy.png";
@@ -75,7 +73,7 @@ impl Game {
     fn game_start(&mut self, context: &mut PluginContext, coop_count: i64, greed_count: i64) {
         //add our bugsters to the scene with random positions
         for _ in 0..coop_count {
-            add_bugster(
+            self.add_bugster(
                 context,
                 self.scene,
                 PersonalityType::Cooperative,
@@ -94,7 +92,7 @@ impl Game {
                 ));
         }
         for _ in 0..greed_count {
-            add_bugster(
+            self.add_bugster(
                 context,
                 self.scene,
                 PersonalityType::Greedy,
@@ -118,6 +116,120 @@ impl Game {
     }
     pub fn change_greed_hp(&mut self, value: i64) {
         self.greed_hp += value
+    }
+
+    //creates the bugster at a given position
+    pub fn add_bugster(
+        &mut self,
+        context: &mut PluginContext,
+        scene_handle: Handle<Scene>,
+        personality: PersonalityType,
+        x: f32,
+        y: f32,
+    ) {
+        let scene = context
+            .scenes
+            .try_get_mut(scene_handle)
+            .expect("Invalid scene handle");
+
+        let graph = &mut scene.graph;
+
+        //create the colliders for both collision and the hitbox detection
+        let collision_body = ColliderBuilder::new(BaseBuilder::new())
+            .with_shape(ColliderShape::Cuboid(
+                fyrox::scene::dim2::collider::CuboidShape {
+                    half_extents: Vector2::new(BASE_SIZE / 2.0, BASE_SIZE / 2.0),
+                },
+            ))
+            .build(graph);
+
+        let detector_body = ColliderBuilder::new(BaseBuilder::new())
+            .with_shape(ColliderShape::Cuboid(
+                fyrox::scene::dim2::collider::CuboidShape {
+                    half_extents: Vector2::new(BASE_SIZE / 2.0, BASE_SIZE / 2.0),
+                },
+            ))
+            .with_collision_groups(InteractionGroups::new(
+                BitMask(0b0000_0000_0000_0000_0000_0000_0000_0001),
+                BitMask(0b0000_0000_0000_0000_0000_0000_0000_0010),
+            ))
+            .with_sensor(true)
+            .build(graph);
+
+        let sprite = self.get_texture(&personality, graph, context.resource_manager);
+
+        //create our rigid body and attach our colliders
+        let node_handle = RigidBodyBuilder::new(BaseBuilder::new().with_children(&[
+            collision_body,
+            detector_body,
+            sprite,
+        ]))
+        .with_mass(1.0)
+        .with_lin_vel(Vector2::new(0.0, 0.0))
+        .with_ang_damping(0.0)
+        .with_gravity_scale(0.0)
+        .with_rotation_locked(true)
+        .with_can_sleep(false)
+        .with_body_type(RigidBodyType::Dynamic)
+        .build(graph);
+
+        //then attach the script to it
+
+        if let Some(node) = graph.try_get_mut(node_handle) {
+            node.add_script(Bugsters::new(
+                BASE_HEALTH,
+                personality,
+                node_handle,
+                collision_body,
+                detector_body,
+            ));
+            node.local_transform_mut()
+                .set_position(Vector3::new(x, y, 0.0));
+        }
+    }
+
+    //gets the texture of the bugster based on its personality type
+    fn get_texture(
+        &mut self,
+        personality: &PersonalityType,
+        graph: &mut Graph,
+        resource_manager: &ResourceManager,
+    ) -> Handle<Node> {
+        let mut material = Material::standard_2d();
+        match personality {
+            PersonalityType::Cooperative => {
+                material.bind(
+                    "diffuseTexture",
+                    Some(resource_manager.request::<Texture>(COOPERATIVE_SPRITE_PATH)),
+                );
+                Log::info("Set sprite to cooperative texture");
+            }
+            PersonalityType::Greedy => {
+                material.bind(
+                    "diffuseTexture",
+                    Some(resource_manager.request::<Texture>(GREEDY_SPRITE_PATH)),
+                );
+                Log::info("Set sprite to greedy texture");
+            }
+        }
+
+        let material_resource = MaterialResource::new_ok(
+            uuid::Uuid::new_v4(), // Generate a random UUID for the resource
+            ResourceKind::Embedded,
+            material,
+        );
+
+        RectangleBuilder::new(
+            BaseBuilder::new().with_local_transform(
+                TransformBuilder::new()
+                    // Size of the rectangle is defined only by scale.
+                    .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
+                    .with_local_position(Vector3::new(0.0, 0.0, 1.0))
+                    .build(),
+            ),
+        )
+        .with_material(material_resource)
+        .build(graph)
     }
 }
 
@@ -239,114 +351,4 @@ impl Plugin for Game {
 
         if path == Path::new("data/Scenes/bugster.rgs") {}
     }
-}
-
-//creates the bugster at a given position
-fn add_bugster(
-    context: &mut PluginContext,
-    scene: Handle<Scene>,
-    personality: PersonalityType,
-    x: f32,
-    y: f32,
-) {
-    let graph = &mut context.scenes.try_get_mut(scene).unwrap().graph;
-
-    //create the colliders for both collision and the hitbox detection
-    let collision_body = ColliderBuilder::new(BaseBuilder::new())
-        .with_shape(ColliderShape::Cuboid(
-            fyrox::scene::dim2::collider::CuboidShape {
-                half_extents: Vector2::new(BASE_SIZE / 2.0, BASE_SIZE / 2.0),
-            },
-        ))
-        .build(graph);
-    //the detector should be just slightly bigger than the actual collider
-    let detector_body = ColliderBuilder::new(BaseBuilder::new())
-        .with_shape(ColliderShape::Cuboid(
-            fyrox::scene::dim2::collider::CuboidShape {
-                half_extents: Vector2::new(
-                    BASE_SIZE / 2.0 + DETECTOR_MARGIN,
-                    BASE_SIZE / 2.0 + DETECTOR_MARGIN,
-                ),
-            },
-        ))
-        .with_collision_groups(InteractionGroups::new(
-            BitMask(0b0000_0000_0000_0000_0000_0000_0000_0001),
-            BitMask(0b0000_0000_0000_0000_0000_0000_0000_0010),
-        ))
-        .with_sensor(true)
-        .build(graph);
-
-    let sprite = get_texture(&personality, graph, context.resource_manager);
-
-    //create our rigid body and attach our colliders
-    let node_handle = RigidBodyBuilder::new(BaseBuilder::new().with_children(&[
-        collision_body,
-        detector_body,
-        sprite,
-    ]))
-    .with_mass(1.0)
-    .with_lin_vel(Vector2::new(0.0, 0.0))
-    .with_ang_damping(0.0)
-    .with_gravity_scale(0.0)
-    .with_rotation_locked(true)
-    .with_can_sleep(false)
-    .with_body_type(RigidBodyType::Dynamic)
-    .build(graph);
-
-    //then attach the script to it
-
-    if let Some(node) = graph.try_get_mut(node_handle) {
-        node.add_script(Bugsters::new(
-            BASE_HEALTH,
-            personality,
-            node_handle,
-            collision_body,
-            detector_body,
-        ));
-        node.local_transform_mut()
-            .set_position(Vector3::new(x, y, 0.0));
-    }
-}
-
-//gets the texture of the bugster based on its personality type
-fn get_texture(
-    personality: &PersonalityType,
-    graph: &mut Graph,
-    resource_manager: &ResourceManager,
-) -> Handle<Node> {
-    let mut material = Material::standard_2d();
-    match personality {
-        PersonalityType::Cooperative => {
-            material.bind(
-                "diffuseTexture",
-                Some(resource_manager.request::<Texture>(COOPERATIVE_SPRITE_PATH)),
-            );
-            Log::info("Set sprite to cooperative texture");
-        }
-        PersonalityType::Greedy => {
-            material.bind(
-                "diffuseTexture",
-                Some(resource_manager.request::<Texture>(GREEDY_SPRITE_PATH)),
-            );
-            Log::info("Set sprite to greedy texture");
-        }
-    }
-
-    let material_resource = MaterialResource::new_ok(
-        uuid::Uuid::new_v4(), // Generate a random UUID for the resource
-        ResourceKind::Embedded,
-        material,
-    );
-
-    RectangleBuilder::new(
-        BaseBuilder::new().with_local_transform(
-            TransformBuilder::new()
-                // Size of the rectangle is defined only by scale.
-                .with_local_scale(Vector3::new(1.0, 1.0, 1.0))
-                .with_local_position(Vector3::new(0.0, 0.0, 1.0))
-                .build(),
-        ),
-    )
-    .with_material(material_resource)
-    .build(graph)
 }

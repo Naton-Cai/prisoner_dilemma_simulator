@@ -26,8 +26,7 @@ use crate::Game;
 const MAX_SPEED: f32 = 15.0;
 const MAX_WAIT_TIME: f32 = 5.0;
 const MIN_WAIT_TIME: f32 = 3.0;
-const BASE_SIZE: f32 = 1.0;
-const DETECTOR_MARGIN: f32 = 0.5;
+const BASE_SIZE: f32 = 0.5;
 const BASE_HEALTH: i64 = 10;
 const SCALE_FACTOR: f32 = 0.1;
 const BOUNCE_FORCE: f32 = -6.0;
@@ -249,15 +248,14 @@ impl Bugsters {
             return;
         };
 
-        //the dectector should be slightly larger than the actual colider so apply a margine
         if let Some(collider) = context
             .scene
             .graph
             .try_get_mut_of_type::<Collider>(self.detector_handle)
         {
             collider.set_shape(ColliderShape::cuboid(
-                change_scale / 2.0 + DETECTOR_MARGIN,
-                change_scale / 2.0 + DETECTOR_MARGIN,
+                change_scale / 2.0,
+                change_scale / 2.0,
             ));
         } else {
             Log::info("Not a Collider");

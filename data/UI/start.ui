@@ -1,7 +1,7 @@
 FTAX:2;
 __ROOT__[]
 {
-	Ui[ScreenSize<vec2f32:945; 657>VisualDebug<bool:false>CursorPosition<vec2f32:0; 0>DoubleClickTimeSlice<f32:0.5>TooltipAppearDelay<f32:0.55>]
+	Ui[ScreenSize<vec2f32:712; 657>VisualDebug<bool:false>CursorPosition<vec2f32:0; 0>DoubleClickTimeSlice<f32:0.5>TooltipAppearDelay<f32:0.55>]
 	{
 		Nodes[]
 		{
@@ -90,31 +90,7 @@ __ROOT__[]
 																	}
 																}
 															}
-															Item2[Key<str:"Global.Font.Size">]
-															{
-																Value[Id<u32:0>0<f32:14>]{}
-															}
-															Item3[Key<str:"Global.Brush.Text">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:190>G<u8:190>B<u8:190>A<u8:255>]{}
-																	}
-																}
-															}
-															Item4[Key<str:"Global.Brush.Information">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:250>G<u8:235>B<u8:215>A<u8:255>]{}
-																	}
-																}
-															}
-															Item5[Key<str:"Global.Brush.Primary">]
+															Item2[Key<str:"Global.Brush.Primary">]
 															{
 																Value[Id<u32:3>]
 																{
@@ -124,13 +100,37 @@ __ROOT__[]
 																	}
 																}
 															}
-															Item6[Key<str:"Global.Brush.Highlight">]
+															Item3[Key<str:"Global.Font.Size">]
+															{
+																Value[Id<u32:0>0<f32:14>]{}
+															}
+															Item4[Key<str:"Global.Brush.Highlight">]
 															{
 																Value[Id<u32:3>]
 																{
 																	0[Id<u32:0>]
 																	{
 																		0[R<u8:80>G<u8:118>B<u8:178>A<u8:255>]{}
+																	}
+																}
+															}
+															Item5[Key<str:"Global.Brush.Text">]
+															{
+																Value[Id<u32:3>]
+																{
+																	0[Id<u32:0>]
+																	{
+																		0[R<u8:190>G<u8:190>B<u8:190>A<u8:255>]{}
+																	}
+																}
+															}
+															Item6[Key<str:"Global.Brush.Information">]
+															{
+																Value[Id<u32:3>]
+																{
+																	0[Id<u32:0>]
+																	{
+																		0[R<u8:250>G<u8:235>B<u8:215>A<u8:255>]{}
 																	}
 																}
 															}
@@ -443,27 +443,7 @@ __ROOT__[]
 																{
 																	Value[Id<u32:0>0<f32:14>]{}
 																}
-																Item3[Key<str:"Global.Brush.Primary">]
-																{
-																	Value[Id<u32:3>]
-																	{
-																		0[Id<u32:0>]
-																		{
-																			0[R<u8:50>G<u8:50>B<u8:50>A<u8:255>]{}
-																		}
-																	}
-																}
-																Item4[Key<str:"Global.Brush.Highlight">]
-																{
-																	Value[Id<u32:3>]
-																	{
-																		0[Id<u32:0>]
-																		{
-																			0[R<u8:80>G<u8:118>B<u8:178>A<u8:255>]{}
-																		}
-																	}
-																}
-																Item5[Key<str:"Global.Brush.Text">]
+																Item3[Key<str:"Global.Brush.Text">]
 																{
 																	Value[Id<u32:3>]
 																	{
@@ -473,13 +453,33 @@ __ROOT__[]
 																		}
 																	}
 																}
-																Item6[Key<str:"Global.Brush.Information">]
+																Item4[Key<str:"Global.Brush.Information">]
 																{
 																	Value[Id<u32:3>]
 																	{
 																		0[Id<u32:0>]
 																		{
 																			0[R<u8:250>G<u8:235>B<u8:215>A<u8:255>]{}
+																		}
+																	}
+																}
+																Item5[Key<str:"Global.Brush.Primary">]
+																{
+																	Value[Id<u32:3>]
+																	{
+																		0[Id<u32:0>]
+																		{
+																			0[R<u8:50>G<u8:50>B<u8:50>A<u8:255>]{}
+																		}
+																	}
+																}
+																Item6[Key<str:"Global.Brush.Highlight">]
+																{
+																	Value[Id<u32:3>]
+																	{
+																		0[Id<u32:0>]
+																		{
+																			0[R<u8:80>G<u8:118>B<u8:178>A<u8:255>]{}
 																		}
 																	}
 																}
@@ -1489,21 +1489,7 @@ __ROOT__[]
 																	}
 																}
 															}
-															Item3[Key<str:"Global.Font.Size">]
-															{
-																Value[Id<u32:0>0<f32:14>]{}
-															}
-															Item4[Key<str:"Global.Brush.Highlight">]
-															{
-																Value[Id<u32:3>]
-																{
-																	0[Id<u32:0>]
-																	{
-																		0[R<u8:80>G<u8:118>B<u8:178>A<u8:255>]{}
-																	}
-																}
-															}
-															Item5[Key<str:"Global.Brush.Text">]
+															Item3[Key<str:"Global.Brush.Text">]
 															{
 																Value[Id<u32:3>]
 																{
@@ -1513,13 +1499,27 @@ __ROOT__[]
 																	}
 																}
 															}
-															Item6[Key<str:"Global.Brush.Information">]
+															Item4[Key<str:"Global.Brush.Information">]
 															{
 																Value[Id<u32:3>]
 																{
 																	0[Id<u32:0>]
 																	{
 																		0[R<u8:250>G<u8:235>B<u8:215>A<u8:255>]{}
+																	}
+																}
+															}
+															Item5[Key<str:"Global.Font.Size">]
+															{
+																Value[Id<u32:0>0<f32:14>]{}
+															}
+															Item6[Key<str:"Global.Brush.Highlight">]
+															{
+																Value[Id<u32:3>]
+																{
+																	0[Id<u32:0>]
+																	{
+																		0[R<u8:80>G<u8:118>B<u8:178>A<u8:255>]{}
 																	}
 																}
 															}
@@ -3640,7 +3640,7 @@ __ROOT__[]
 								Value[Value<i64:0>Flags<u8:1>]{}
 								Step[Value<i64:1>Flags<u8:1>]{}
 								MinValue[Value<i64:0>Flags<u8:1>]{}
-								MaxValue[Value<i64:30>Flags<u8:1>]{}
+								MaxValue[Value<i64:50>Flags<u8:1>]{}
 								Precision[Value<u64:3>Flags<u8:1>]{}
 								DragValueScaling[Value<f32:0.1>Flags<u8:1>]{}
 							}
@@ -4009,7 +4009,7 @@ __ROOT__[]
 								Value[Value<i64:0>Flags<u8:1>]{}
 								Step[Value<i64:1>Flags<u8:1>]{}
 								MinValue[Value<i64:0>Flags<u8:1>]{}
-								MaxValue[Value<i64:30>Flags<u8:1>]{}
+								MaxValue[Value<i64:50>Flags<u8:1>]{}
 								Precision[Value<u64:3>Flags<u8:1>]{}
 								DragValueScaling[Value<f32:0.1>Flags<u8:1>]{}
 							}
