@@ -11,7 +11,6 @@ use fyrox::{
         uuid,
         visitor::prelude::*,
     },
-    engine::GraphicsContext,
     graph::SceneGraph,
     gui::{
         button::ButtonMessage, message::MessageDirection, numeric::NumericUpDown,
@@ -291,12 +290,6 @@ impl Plugin for Game {
         settings.fxaa = false;
         Log::verify(graphics_context.renderer.set_quality_settings(&settings));
         graphics_context.window.set_title("Prisoner Dilemma");
-
-        if let GraphicsContext::Initialized(ref graphics_context) = context.graphics_context {
-            graphics_context
-                .window
-                .set_fullscreen(Some(Fullscreen::Borderless(None)));
-        }
     }
 
     fn on_ui_message(

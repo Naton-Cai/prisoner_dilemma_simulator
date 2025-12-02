@@ -18,6 +18,7 @@ cargo run --bin executor
 
 When you start the game you are brought into the start menu. Here you can select the number of bugsters of each personality you wish to spawn. Each bugster starts with 10 health which changes as seen above. When a bugster drops to 0 HP it dies.
 ![alt text](https://github.com/Naton-Cai/Prisoner-Dilemma-Simulator/blob/master/Assests/Screenshots/screenshot1.png "Screenshot of Start Menu")
+![alt text](https://github.com/Naton-Cai/Prisoner-Dilemma-Simulator/blob/master/Assests/Screenshots/screenshot2.png "Screenshot of Gameplay")
 
 ## Things that didn't work
 
