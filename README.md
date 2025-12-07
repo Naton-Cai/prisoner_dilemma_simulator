@@ -13,6 +13,24 @@ Prison Dilemna Simulator is a game program in Rust, using Fyrox, that simulates 
 cargo build
 cargo run --bin executor
 ```
+## Notes for Linux
+The alsa-sys crate dependecy requires the ALSA development libraries and so may not build correctly on linux, If you also encounter this problem install the libraries using the commands below.
+
+### Debian/Ubuntu
+```bash
+sudo apt-get update
+sudo apt-get install libasound2-dev pkg-config build-essential
+```
+
+### Fedora
+```bash
+sudo dnf install alsa-lib-devel
+```
+
+### Arch Linux
+```bash
+sudo pacman -S alsa-lib
+```
 
 ## How to play
 

@@ -33,7 +33,6 @@ use fyrox::{
         transform::TransformBuilder,
         Scene,
     },
-    window::Fullscreen,
 };
 
 use rand::random_range;
@@ -51,8 +50,8 @@ const MAX_Y: f32 = 3.5;
 const BASE_HEALTH: i64 = 10;
 const BASE_SIZE: f32 = 0.5;
 
-const COOPERATIVE_SPRITE_PATH: &str = "data/sprites/bugster_cooperative.png";
-const GREEDY_SPRITE_PATH: &str = "data/sprites/bugster_greedy.png";
+const COOPERATIVE_SPRITE_PATH: &str = "data/Sprites/bugster_cooperative.png";
+const GREEDY_SPRITE_PATH: &str = "data/Sprites/bugster_greedy.png";
 
 #[derive(Default, Visit, Reflect, Debug)]
 #[reflect(non_cloneable)]
