@@ -13,28 +13,33 @@ Prison Dilemna Simulator is a game program in Rust, using Fyrox, that simulates 
 cargo build
 cargo run --bin executor
 ```
+
 ## Notes for Linux
-The alsa-sys crate dependecy requires the ALSA development libraries and so may not build correctly on linux, If you also encounter this problem install the libraries using the commands below.
+
+The alsa-sys crate dependency requires the ALSA development libraries and so may not build correctly on linux, If you also encounter this problem install the libraries using the commands below.
 
 ### Debian/Ubuntu
+
 ```bash
 sudo apt-get update
 sudo apt-get install libasound2-dev pkg-config build-essential
 ```
 
 ### Fedora
+
 ```bash
 sudo dnf install alsa-lib-devel
 ```
 
 ### Arch Linux
+
 ```bash
 sudo pacman -S alsa-lib
 ```
 
 ## How to play
 
-When you start the game you are brought into the start menu. Here you can select the number of bugsters of each personality you wish to spawn. Each bugster starts with 10 health which changes as seen above. When a bugster drops to 0 HP it dies.
+When you start the game you are brought into the start menu. Here you can select the number of bugsters of each personality you wish to spawn. Each bugster starts with 10 health which changes as seen above. A bugster's size changes depending on the hp. When a bugster drops to 0 HP it dies.
 ![alt text](https://github.com/Naton-Cai/Prisoner-Dilemma-Simulator/blob/master/Assests/Screenshots/screenshot1.png "Screenshot of Start Menu")
 ![alt text](https://github.com/Naton-Cai/Prisoner-Dilemma-Simulator/blob/master/Assests/Screenshots/screenshot2.png "Screenshot of Gameplay")
 
