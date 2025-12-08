@@ -1,6 +1,6 @@
 use fyrox::{
     core::{
-        algebra::{Vector2, Vector3},
+        algebra::{Const, Matrix, Vector2, Vector3},
         log::Log,
         pool::Handle,
         reflect::prelude::*,
@@ -98,14 +98,17 @@ impl Bugsters {
     //checks for entity collision
     fn entity_contact(&mut self, context: &mut ScriptContext) {
         //gets all intersected colliders
-        let graph = &mut context.scene.graph;
-        let Some(detector) = graph.try_get_of_type::<Collider>(self.detector_handle) else {
+        let Some(detector) = context
+            .scene
+            .graph
+            .try_get_of_type::<Collider>(self.detector_handle)
+        else {
             return;
         };
 
         //intersections is a vector of instersecting collider pairs
         let intersections: Vec<_> = detector
-            .intersects(&graph.physics2d)
+            .intersects(&context.scene.graph.physics2d)
             .filter(|i| i.has_any_active_contact)
             .collect();
 
@@ -126,87 +129,110 @@ impl Bugsters {
                     return;
                 }
             };
-
-            //gets the personality of  the contacted bugster from its script then apply the health change to our bugster
-            if let Some(script) = context
-                .scene
-                .graph
-                .try_get_script_of_mut::<Bugsters>(parent_rigid)
-            {
-                let health_change = self.health_calculation(&script.personality);
-                let actual_health_change = cmp::max(health_change, self.healthpoints * -1); //calcuates the actual amount lost, accounting for health dropping to 0
-                self.healthpoints += health_change;
-
-                //apply the change to the overall game counters
-                let game = context.plugins.get_mut::<Game>();
-                match self.personality {
-                    PersonalityType::Greedy => {
-                        game.change_greed_hp(actual_health_change);
-                        context
-                            .user_interfaces
-                            .first()
-                            .send_message(TextMessage::text(
-                                game.greed_counter,
-                                MessageDirection::ToWidget,
-                                format!("Greed Total: {}", game.greed_hp).to_owned(),
-                            ));
-                    }
-                    PersonalityType::Cooperative => {
-                        game.change_coop_hp(actual_health_change);
-                        context
-                            .user_interfaces
-                            .first()
-                            .send_message(TextMessage::text(
-                                game.coop_counter,
-                                MessageDirection::ToWidget,
-                                format!("Coop Total: {}", game.coop_hp).to_owned(),
-                            ));
-                    }
-                }
-
-                //if hp drops to 0, remove this node
-                if self.healthpoints <= 0 {
-                    context.scene.graph.remove_node(self.rigid_body_handle);
-                }
-            } else {
-                Log::err("NO BUGSTER SCRIPT FOUND");
-            }
+            //apply the health change
+            self.apply_health(parent_rigid, context);
 
             //get the direction of where the the two colliders touch
-            let direction = {
-                let graph = &context.scene.graph;
-                let contracted_node = match graph.try_get(collided) {
-                    Some(node) => node,
-                    None => return,
-                };
-                let self_node = match graph.try_get(self.detector_handle) {
-                    Some(node) => node,
-                    None => return,
-                };
-
-                let self_position = self_node.global_position();
-                let contracted_position = contracted_node.global_position();
-
-                contracted_position - self_position
+            let direction = match self.get_direction(context, collided) {
+                Some(d) => d,
+                None => return,
             };
 
-            let Some(rigid_body) = context
-                .scene
-                .graph
-                .try_get_mut_of_type::<RigidBody>(self.rigid_body_handle)
-            else {
-                Log::info("Not a Rigid Body!");
-                return;
-            };
             //use the direction to apply a knockback force that knocks the two nodes away from eachother
-            rigid_body.apply_impulse(Vector2::new(
-                direction.x * BOUNCE_FORCE,
-                direction.y * BOUNCE_FORCE,
-            ));
+            self.apply_bounce(context, direction.x, direction.y);
         }
 
         //recalcualte the size based on the current health
         self.change_size(context);
+    }
+
+    //apply the change in health base on the personalities of the contacted monsters
+    fn apply_health(&mut self, parent_rigid: Handle<Node>, context: &mut ScriptContext) {
+        let Some(script) = context
+            .scene
+            .graph
+            .try_get_script_of_mut::<Bugsters>(parent_rigid)
+        else {
+            return;
+        };
+        //gets the personality of the contacted bugster from its script then apply the health change to our bugster
+        let health_change = self.health_calculation(&script.personality);
+        let actual_health_change = cmp::max(health_change, self.healthpoints * -1); //calcuates the actual amount lost, accounting for health dropping to 0
+        self.healthpoints += health_change;
+        //apply the change to the overall game counters
+        let game = context.plugins.get_mut::<Game>();
+        match self.personality {
+            PersonalityType::Greedy => {
+                game.change_greed_hp(actual_health_change);
+                context
+                    .user_interfaces
+                    .first()
+                    .send_message(TextMessage::text(
+                        game.greed_counter,
+                        MessageDirection::ToWidget,
+                        format!("Greed Total: {}", game.greed_hp).to_owned(),
+                    ));
+            }
+            PersonalityType::Cooperative => {
+                game.change_coop_hp(actual_health_change);
+                context
+                    .user_interfaces
+                    .first()
+                    .send_message(TextMessage::text(
+                        game.coop_counter,
+                        MessageDirection::ToWidget,
+                        format!("Coop Total: {}", game.coop_hp).to_owned(),
+                    ));
+            }
+        }
+        //if hp drops to 0, remove this node
+        if self.healthpoints <= 0 {
+            context.scene.graph.remove_node(self.rigid_body_handle);
+        }
+    }
+
+    //calculates the health changes when contacting another bugster
+    pub fn health_calculation(&mut self, contact_personality: &PersonalityType) -> i64 {
+        match (&self.personality, contact_personality) {
+            (PersonalityType::Greedy, PersonalityType::Greedy) => GREEDGREED_HEALTH_GAIN,
+            (PersonalityType::Greedy, PersonalityType::Cooperative) => GREEDCOOP_HEALTH_GAIN,
+            (PersonalityType::Cooperative, PersonalityType::Greedy) => COOPGREED_HEALTH_GAIN,
+            (PersonalityType::Cooperative, PersonalityType::Cooperative) => COOPCOOP_HEALTH_GAIN,
+        }
+    }
+
+    //gets the direction of the collided bugster in relation to this bugster
+    fn get_direction(
+        &self,
+        context: &mut ScriptContext,
+        collided: Handle<Node>,
+    ) -> Option<Matrix<f32, Const<3>, Const<1>, fyrox::core::algebra::ArrayStorage<f32, 3, 1>>>
+    {
+        let graph = &context.scene.graph;
+        let contracted_node = graph.try_get(collided)?;
+        let self_node = graph.try_get(self.detector_handle)?;
+
+        let self_position = self_node.global_position();
+        let contracted_position = contracted_node.global_position();
+
+        Some(contracted_position - self_position)
+    }
+
+    //apply a impuluse in a given direction x and y
+    fn apply_bounce(&mut self, context: &mut ScriptContext, direction_x: f32, direction_y: f32) {
+        let Some(rigid_body) = context
+            .scene
+            .graph
+            .try_get_mut_of_type::<RigidBody>(self.rigid_body_handle)
+        else {
+            Log::info("Not a Rigid Body!");
+            return;
+        };
+
+        rigid_body.apply_impulse(Vector2::new(
+            direction_x * BOUNCE_FORCE,
+            direction_y * BOUNCE_FORCE,
+        ));
     }
 
     //changes the size of the bugster based on the health
@@ -261,16 +287,6 @@ impl Bugsters {
             Log::info("Not a Collider");
             return;
         };
-    }
-
-    //calculates the health changes when contacting another bugster
-    pub fn health_calculation(&mut self, contact_personality: &PersonalityType) -> i64 {
-        match (&self.personality, contact_personality) {
-            (PersonalityType::Greedy, PersonalityType::Greedy) => GREEDGREED_HEALTH_GAIN,
-            (PersonalityType::Greedy, PersonalityType::Cooperative) => GREEDCOOP_HEALTH_GAIN,
-            (PersonalityType::Cooperative, PersonalityType::Greedy) => COOPGREED_HEALTH_GAIN,
-            (PersonalityType::Cooperative, PersonalityType::Cooperative) => COOPCOOP_HEALTH_GAIN,
-        }
     }
 }
 

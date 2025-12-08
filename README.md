@@ -50,3 +50,7 @@ One of the big things not implemented was proper health displays for each bugste
 ## Things learned
 
 This is the first big project I have developed in Rust, with the addition of developing using a whole new game engine with Fyrox, I found the process a bit difficult. Not suprisingly, since this is the first rust program where I had to manage the borrow checker, I had inital problems with it, it still takea bit to understand but I am sure I will eventually get full acclimated to it. I had problems managing the fyrox crates. Coming from Python, I assumed all methods for a node in Fyrox were automatically built into the module for that specific node. This is not the case as I learned, many base methods are implented into a base scene node module. This result in a lot of the tutorials in the Fyrox documentation not working which proved initally frustrating.
+
+## AI usage
+
+AI was used in this project, however I found that since Fyrox is a rather niche game engine, I found most of what AI gave was not accurate to the Fyrox Engine. Most of the code tended to default to Unity-esque code. What I did use AI for was to mainly identify issues with the borrow checker.
