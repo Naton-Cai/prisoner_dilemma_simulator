@@ -39,16 +39,13 @@ const COOPCOOP_HEALTH_GAIN: i64 = 2;
 
 //our enum that determines the personality type of our bugster
 #[derive(Visit, Reflect, Debug, Clone)]
+#[derive(Default)]
 pub enum PersonalityType {
     Greedy,
+    #[default]
     Cooperative,
 }
 
-impl Default for PersonalityType {
-    fn default() -> Self {
-        PersonalityType::Cooperative
-    }
-}
 
 #[derive(Visit, Reflect, Default, Debug, Clone, TypeUuidProvider, ComponentProvider)]
 #[type_uuid(id = "9b4ca1b0-d66b-472e-9dcc-8700d6a55b55")]
@@ -157,7 +154,7 @@ impl Bugsters {
         };
         //gets the personality of the contacted bugster from its script then apply the health change to our bugster
         let health_change = self.health_calculation(&script.personality);
-        let actual_health_change = cmp::max(health_change, self.healthpoints * -1); //calcuates the actual amount lost, accounting for health dropping to 0
+        let actual_health_change = cmp::max(health_change, -self.healthpoints); //calcuates the actual amount lost, accounting for health dropping to 0
         self.healthpoints += health_change;
         //apply the change to the overall game counters
         let game = context.plugins.get_mut::<Game>();
@@ -241,7 +238,7 @@ impl Bugsters {
         let change_scale: f32 = if self.healthpoints >= BASE_HEALTH {
             SCALE_FACTOR * (self.healthpoints as f32 - BASE_HEALTH as f32).sqrt() + BASE_SIZE
         } else {
-            -1.0 * SCALE_FACTOR * (-self.healthpoints as f32 + BASE_HEALTH as f32).sqrt()
+            -SCALE_FACTOR * (-self.healthpoints as f32 + BASE_HEALTH as f32).sqrt()
                 + BASE_SIZE
         };
 
@@ -285,8 +282,7 @@ impl Bugsters {
             ));
         } else {
             Log::info("Not a Collider");
-            return;
-        };
+        }
     }
 }
 

@@ -75,8 +75,8 @@ impl Game {
                 context,
                 self.scene,
                 PersonalityType::Cooperative,
-                random_range(MAX_X * -1.0..=MAX_X),
-                random_range(MAX_Y * -1.0..=MAX_Y),
+                random_range(-MAX_X..=MAX_X),
+                random_range(-MAX_Y..=MAX_Y),
             );
             //add the health of the bugster to the counter
             self.change_coop_hp(BASE_HEALTH);
@@ -94,8 +94,8 @@ impl Game {
                 context,
                 self.scene,
                 PersonalityType::Greedy,
-                random_range(MAX_X * -1.0..=MAX_X),
-                random_range(MAX_Y * -1.0..=MAX_Y),
+                random_range(-MAX_X..=MAX_X),
+                random_range(-MAX_Y..=MAX_Y),
             );
             self.change_greed_hp(BASE_HEALTH);
             context
@@ -299,13 +299,13 @@ impl Plugin for Game {
     ) {
         if let Some(ButtonMessage::Click) = message.data() {
             if message.destination() == self.start {
-                let coop_count = **&context
+                let coop_count = *context
                     .user_interfaces
                     .first_mut()
                     .try_get_mut_of_type::<NumericUpDown<i64>>(self.coop_field)
                     .unwrap()
                     .value;
-                let greed_count = **&context
+                let greed_count = *context
                     .user_interfaces
                     .first_mut()
                     .try_get_mut_of_type::<NumericUpDown<i64>>(self.greed_field)
