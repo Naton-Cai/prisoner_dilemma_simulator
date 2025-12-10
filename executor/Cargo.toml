@@ -6,8 +6,8 @@ edition = "2021"
 
 [dependencies]
 fyrox = { workspace = true }
-PrisonerDilemmaSimulator = { path = "../game", optional = true }
+prisoner_dilemma_simulator = { path = "../game", optional = true }
 
 [features]
-default = ["PrisonerDilemmaSimulator"]
+default = ["prisoner_dilemma_simulator"]
 dylib = ["fyrox/dylib"]

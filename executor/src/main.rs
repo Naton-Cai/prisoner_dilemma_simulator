@@ -1,10 +1,10 @@
 //! Executor with your game connected to it as a plugin.
+use fyrox::core::log::Log;
 use fyrox::engine::executor::Executor;
 use fyrox::event_loop::EventLoop;
-use fyrox::core::log::Log;
 
 fn main() {
-    Log::set_file_name("PrisonerDilemmaSimulator.log");
+    Log::set_file_name("prisoner_dilemma_simulator.log");
 
     let mut executor = Executor::new(Some(EventLoop::new().unwrap()));
 
@@ -23,7 +23,7 @@ fn main() {
     // Static linking.
     #[cfg(not(feature = "dylib"))]
     {
-        use PrisonerDilemmaSimulator::Game;
+        use prisoner_dilemma_simulator::Game;
         executor.add_plugin(Game::default());
     }
 

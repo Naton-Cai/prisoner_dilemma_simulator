@@ -8,9 +8,9 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-PrisonerDilemmaSimulator = { path = "../game", default-features = false }
+prisoner_dilemma_simulator = { path = "../game", default-features = false }
 fyrox.workspace = true
 
 [features]
-default = ["PrisonerDilemmaSimulator/default"]
-dylib-engine = ["PrisonerDilemmaSimulator/dylib-engine"]
+default = ["prisoner_dilemma_simulator/default"]
+dylib-engine = ["prisoner_dilemma_simulator/dylib-engine"]

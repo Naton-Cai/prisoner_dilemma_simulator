@@ -38,19 +38,16 @@ const COOPGREED_HEALTH_GAIN: i64 = -2;
 const COOPCOOP_HEALTH_GAIN: i64 = 2;
 
 //our enum that determines the personality type of our bugster
-#[derive(Visit, Reflect, Debug, Clone)]
-#[derive(Default)]
+#[derive(Visit, Reflect, Debug, Clone, Default)]
 pub enum PersonalityType {
     Greedy,
     #[default]
     Cooperative,
 }
 
-
 #[derive(Visit, Reflect, Default, Debug, Clone, TypeUuidProvider, ComponentProvider)]
 #[type_uuid(id = "9b4ca1b0-d66b-472e-9dcc-8700d6a55b55")]
 #[visit(optional)]
-
 pub struct Bugsters {
     pub healthpoints: i64,
     pub personality: PersonalityType,
@@ -238,8 +235,7 @@ impl Bugsters {
         let change_scale: f32 = if self.healthpoints >= BASE_HEALTH {
             SCALE_FACTOR * (self.healthpoints as f32 - BASE_HEALTH as f32).sqrt() + BASE_SIZE
         } else {
-            -SCALE_FACTOR * (-self.healthpoints as f32 + BASE_HEALTH as f32).sqrt()
-                + BASE_SIZE
+            -SCALE_FACTOR * (-self.healthpoints as f32 + BASE_HEALTH as f32).sqrt() + BASE_SIZE
         };
 
         if let Some(rigid_body) = context

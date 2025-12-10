@@ -1,5 +1,5 @@
 //! Wrapper for hot-reloadable plugin.
-use PrisonerDilemmaSimulator::{fyrox::plugin::Plugin, Game};
+use prisoner_dilemma_simulator::{fyrox::plugin::Plugin, Game};
 
 #[no_mangle]
 pub fn fyrox_plugin() -> Box<dyn Plugin> {
