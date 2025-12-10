@@ -10,15 +10,14 @@ Prison Dilemma Simulator is a game program in Rust, using Fyrox, that simulates 
 ## Installation
 
 ```bash
-cargo build
 cargo run --bin executor
 ```
 
-## Notes for Linux
+## Notes
+
+It is noted that Fyrox has pretty long build times which can range from 5-10 minutes. A executable has also been included for convenience.
 
 The alsa-sys crate dependency requires the ALSA development libraries and so may not build correctly on Linux, If you also encounter this problem, install the libraries using the commands below.
-
-### Debian/Ubuntu
 
 ```bash
 sudo apt-get update
@@ -54,3 +53,7 @@ This is the first big project I have developed in Rust, with the addition of dev
 ## AI usage
 
 AI was used in this project, however I found that since Fyrox is a rather niche game engine, I found most of what AI gave was not accurate to the Fyrox Engine. Most of the code tended to default to Unity-esque code. What I did use AI for was to mainly identify issues with the borrow checker.
+
+## Author
+
+Naton Cai
